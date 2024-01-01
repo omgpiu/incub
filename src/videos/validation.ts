@@ -7,13 +7,17 @@ export const baseInputValidation = [
     .withMessage('Title is required')
     .bail()
     .isString()
-    .withMessage('Tittle must be a string'),
+    .withMessage('Tittle must be a string')
+    .isLength({ min: 1, max: 40 })
+    .withMessage('Title must be between 1 and 40 characters long'),
   check('author')
     .notEmpty()
     .withMessage('Author must be a string')
     .bail()
     .isString()
-    .withMessage('Author must be a string'),
+    .withMessage('Author must be a string')
+    .isLength({ min: 1, max: 40 })
+    .withMessage('Title must be between 1 and 40 characters long'),
   check('availableResolutions')
     .notEmpty()
     .withMessage('Available Resolutions are required')
