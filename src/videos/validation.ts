@@ -61,13 +61,8 @@ export const putValidation = [
     .isISO8601()
     .withMessage('publicationDate must be a date in ISO 8601 format')
     .custom((value) => {
-      // Попытка разбора даты
-      const parsedDate = parseISO(value);
-      // Проверка, является ли результат валидным объектом даты и соответствует ли формату
-      return (
-        isValid(parsedDate) &&
-        value === parsedDate.toISOString().substring(0, 10)
-      );
+      const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+      return regex.test(value) && isValid(parseISO(value));
     })
     .withMessage('publicationDate must be a valid date in YYYY-MM-DD format'),
 ];
