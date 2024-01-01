@@ -51,9 +51,7 @@ export class VideoManager {
       return null;
     }
 
-    Object.assign(video, updateData, {
-      publicationDate: new Date().toISOString(),
-    });
+    Object.assign(video, updateData);
     return video;
   }
 
