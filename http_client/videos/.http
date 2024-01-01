@@ -1,0 +1,41 @@
+@baseUrl = http://localhost:3000
+
+### Get Videos
+GET {{baseUrl}}/videos
+Accept: application/json
+
+### Create Video
+
+POST {{baseUrl}}/videos
+Content-Type: application/json
+
+{
+  "title": "string",
+  "author": "string",
+  "availableResolutions": [
+    "P144"
+  ]
+}
+
+### Get video by id
+GET {{baseUrl}}/videos/0
+Accept: application/json
+
+### Update video by id
+PUT {{baseUrl}}/videos/0
+Content-Type: application/json
+
+{
+  "title": "string",
+  "author": "string",
+  "availableResolutions": [
+    "P144"
+  ],
+  "canBeDownloaded": true,
+  "minAgeRestriction": 18,
+  "publicationDate": "2024-01-01T16:21:43.628Z"
+}
+
+### Delete video by id
+DELETE {{baseUrl}}/videos/3
+Content-Type: application/json

@@ -1,11 +1,17 @@
 import createError from 'http-errors';
-import express, { Request, Response, NextFunction, Application, ErrorRequestHandler } from 'express';
+import express, {
+  Application,
+  ErrorRequestHandler,
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
 import indexRouter from './routes/index'; // Ensure these are exported as modules
-import usersRouter from './routes/users';
+import videosRouter from './routes/videos';
 
 const app: Application = express();
 
@@ -20,10 +26,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/videos', videosRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req: Request, res: Response, next: NextFunction) {
+app.use(function (req: Request, res: Response, next: NextFunction) {
   next(createError(404));
 });
 
