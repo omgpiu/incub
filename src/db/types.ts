@@ -2,7 +2,7 @@ import { RESOLUTION } from './generate';
 
 export type Resolution = (typeof RESOLUTION)[number];
 export interface Video {
-  id: string | number;
+  id: number;
   title: string;
   author: string;
   canBeDownloaded: boolean;
