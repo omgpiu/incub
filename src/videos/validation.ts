@@ -1,5 +1,6 @@
 import { check } from 'express-validator';
 import { RESOLUTION } from '../db';
+import { isValid, parseISO } from 'date-fns';
 
 export const baseInputValidation = [
   check('title')
@@ -17,7 +18,7 @@ export const baseInputValidation = [
     .isString()
     .withMessage('Author must be a string')
     .isLength({ min: 1, max: 20 })
-    .withMessage('Title must be between 1 and 40 characters long'),
+    .withMessage('Title must be between 1 and 20 characters long'),
   check('availableResolutions')
     .notEmpty()
     .withMessage('Available Resolutions are required')
@@ -58,5 +59,15 @@ export const putValidation = [
     .withMessage('publicationDate field is required')
     .bail()
     .isISO8601()
-    .withMessage('publicationDate must be a date in ISO 8601 format'),
+    .withMessage('publicationDate must be a date in ISO 8601 format')
+    .custom((value) => {
+      // Попытка разбора даты
+      const parsedDate = parseISO(value);
+      // Проверка, является ли результат валидным объектом даты и соответствует ли формату
+      return (
+        isValid(parsedDate) &&
+        value === parsedDate.toISOString().substring(0, 10)
+      );
+    })
+    .withMessage('publicationDate must be a valid date in YYYY-MM-DD format'),
 ];
