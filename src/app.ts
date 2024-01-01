@@ -34,16 +34,16 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 });
 
 // error handler
-// const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-//
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// };
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-// app.use(errorHandler);
-app.use();
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+};
+
+app.use(errorHandler);
+
 export default app;
