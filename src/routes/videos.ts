@@ -18,16 +18,14 @@ router.post('/', baseInputValidation, (req: Request, res: Response) => {
   if (checkForError(res, errors as Result<FieldValidationError>)) {
     return;
   }
-  const newVideo = {
+  const resPayload = {
     title: req.body.title,
     author: req.body.author,
-    canBeDownloaded: req.body.canBeDownloaded,
-    minAgeRestriction: req.body.minAgeRestriction,
     availableResolutions: req.body.availableResolutions,
   };
 
-  VideoManager.create(newVideo);
-  return res.status(201).json(newVideo);
+  const responce = VideoManager.create(resPayload);
+  return res.status(201).json(responce);
 });
 
 router.get('/:id', (req: Request, res: Response) => {

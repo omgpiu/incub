@@ -23,13 +23,15 @@ export class VideoManager {
   }
 
   static create(
-    videoData: Omit<Video, 'id' | 'createdAt' | 'publicationDate'>,
+    videoData: Pick<Video, 'title' | 'author' | 'availableResolutions'>,
   ) {
     const newVideo = {
       id: faker.number.int(),
       ...videoData,
       createdAt: new Date().toISOString(),
       publicationDate: new Date().toISOString(),
+      canBeDownloaded: true,
+      minAgeRestriction: null,
     };
     this.dbVideos.push(newVideo);
     return newVideo;
