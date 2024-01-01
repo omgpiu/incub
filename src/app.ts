@@ -12,6 +12,7 @@ import logger from 'morgan';
 
 import indexRouter from './routes/index'; // Ensure these are exported as modules
 import videosRouter from './routes/videos';
+import testingRouter from './routes/test';
 
 const app: Application = express();
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/testing', testingRouter);
 app.use('/videos', videosRouter);
 
 // catch 404 and forward to error handler
@@ -34,12 +36,11 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 });
 
 // error handler
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+const errorHandler: ErrorRequestHandler = (err, req, res) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  console.log(res.locals.error, 'res.locals.error');
-  console.log(err, 'error');
+
   // render the error page
   res.status(err.status || 500);
   res.render('error');

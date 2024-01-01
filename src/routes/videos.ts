@@ -4,15 +4,14 @@ import {
   Result,
   validationResult,
 } from 'express-validator';
-import { dbVideos } from '../db';
-import { faker } from '@faker-js/faker';
+import { VideoManager } from '../db';
 import { baseInputValidation, putValidation } from '../videos';
 import { checkForError } from '../helpers';
 
 const router: Router = express.Router();
 
 router.get('/', (req: Request, res: Response) => {
-  res.send(dbVideos);
+  res.send(VideoManager.getAll());
 });
 router.post('/', baseInputValidation, (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -20,21 +19,19 @@ router.post('/', baseInputValidation, (req: Request, res: Response) => {
     return;
   }
   const newVideo = {
-    id: faker.string.uuid(),
     title: req.body.title,
-    author: req.body.author ?? faker.name.firstName(),
-    canBeDownloaded: req.body.canBeDownloaded ?? true,
-    minAgeRestriction: req.body.minAgeRestriction ?? null,
-    createdAt: new Date().toISOString(),
-    publicationDate: new Date().toISOString(),
+    author: req.body.author,
+    canBeDownloaded: req.body.canBeDownloaded,
+    minAgeRestriction: req.body.minAgeRestriction,
     availableResolutions: req.body.availableResolutions,
   };
-  dbVideos.push(newVideo);
+
+  VideoManager.create(newVideo);
   return res.status(201).json(newVideo);
 });
 
 router.get('/:id', (req: Request, res: Response) => {
-  const video = dbVideos.find((video) => video.id === req.params.id);
+  const video = VideoManager.getById(req.params.id);
   if (video) {
     return res.status(200).json(video);
   } else {
@@ -52,26 +49,26 @@ router.put(
       return;
     }
 
-    const video = dbVideos.find((video) => video.id === req.params.id);
-    if (video) {
-      video.title = req.body.title;
-      video.author = req.body.author;
-      video.canBeDownloaded = req.body.canBeDownloaded;
-      video.minAgeRestriction = req.body.minAgeRestriction;
-      video.availableResolutions = req.body.availableResolutions;
-      video.publicationDate = req.body.publicationDate;
+    const updatedVideo = VideoManager.update(req.params.id, {
+      title: req.body.title,
+      author: req.body.author,
+      canBeDownloaded: req.body.canBeDownloaded,
+      minAgeRestriction: req.body.minAgeRestriction,
+      availableResolutions: req.body.availableResolutions,
+      publicationDate: req.body.publicationDate,
+    });
 
-      return res.status(204);
+    if (updatedVideo) {
+      return res.status(204).end();
     } else {
-      return res.status(404);
+      return res.status(404).json({ message: 'Video not found' });
     }
   },
 );
 
 router.delete('/:id', (req: Request, res: Response) => {
-  const videoIndex = dbVideos.findIndex((video) => video.id === req.params.id);
-  if (videoIndex !== -1) {
-    dbVideos.splice(videoIndex, 1);
+  const isDeleteSuccessful = VideoManager.delete(req.params.id);
+  if (isDeleteSuccessful) {
     return res.status(204).end();
   } else {
     return res.status(404).send('Video not found');
