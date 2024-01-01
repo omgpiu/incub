@@ -7,10 +7,12 @@ export class VideoManager {
     id: id < 3 ? id : faker.number.int(),
     title: faker.lorem.sentence(),
     author: faker.lorem.words({ min: 1, max: 2 }),
-    canBeDownloaded: faker.datatype.boolean(),
-    minAgeRestriction: faker.number.int({ min: 0, max: 21 }),
-    createdAt: faker.date.past().toISOString(),
-    publicationDate: faker.date.recent().toISOString(),
+    canBeDownloaded: false,
+    minAgeRestriction: null,
+    createdAt: new Date().toISOString(),
+    publicationDate: new Date(
+      new Date().setDate(new Date().getDate() + 1),
+    ).toISOString(),
     availableResolutions: generateRandomResolution(),
   }));
 
@@ -32,7 +34,7 @@ export class VideoManager {
       publicationDate: new Date(
         new Date().setDate(new Date().getDate() + 1),
       ).toISOString(),
-      canBeDownloaded: true,
+      canBeDownloaded: false,
       minAgeRestriction: null,
     };
     this.dbVideos.push(newVideo);
