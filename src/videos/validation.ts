@@ -16,7 +16,7 @@ export const baseInputValidation = [
     .bail()
     .isString()
     .withMessage('Author must be a string')
-    .isLength({ min: 1, max: 40 })
+    .isLength({ min: 1, max: 20 })
     .withMessage('Title must be between 1 and 40 characters long'),
   check('availableResolutions')
     .notEmpty()
