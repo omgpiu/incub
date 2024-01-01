@@ -29,7 +29,9 @@ export class VideoManager {
       id: faker.number.int(),
       ...videoData,
       createdAt: new Date().toISOString(),
-      publicationDate: new Date().toISOString(),
+      publicationDate: new Date(
+        new Date().setDate(new Date().getDate() + 1),
+      ).toISOString(),
       canBeDownloaded: true,
       minAgeRestriction: null,
     };
