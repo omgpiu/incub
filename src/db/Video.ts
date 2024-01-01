@@ -4,7 +4,7 @@ import { Video } from './types';
 
 export class VideoManager {
   static dbVideos: Video[] = Array.from({ length: 10 }, (_, id) => ({
-    id: id < 3 ? String(id) : faker.string.uuid(),
+    id: id < 3 ? id : faker.number.int(),
     title: faker.lorem.sentence(),
     author: faker.lorem.words({ min: 1, max: 2 }),
     canBeDownloaded: faker.datatype.boolean(),
@@ -19,17 +19,19 @@ export class VideoManager {
   }
 
   static getById(id: string) {
-    return this.dbVideos.find((video) => video.id === id);
+    return this.dbVideos.find((video) => video.id === Number(id));
   }
 
   static create(
-    videoData: Omit<Video, 'id' | 'createdAt' | 'publicationDate'>,
+    videoData: Pick<Video, 'title' | 'author' | 'availableResolutions'>,
   ) {
     const newVideo = {
-      id: faker.string.uuid(),
+      id: faker.number.int(),
       ...videoData,
       createdAt: new Date().toISOString(),
       publicationDate: new Date().toISOString(),
+      canBeDownloaded: true,
+      minAgeRestriction: null,
     };
     this.dbVideos.push(newVideo);
     return newVideo;
@@ -52,7 +54,9 @@ export class VideoManager {
   }
 
   static delete(id: string) {
-    const videoIndex = this.dbVideos.findIndex((video) => video.id === id);
+    const videoIndex = this.dbVideos.findIndex(
+      (video) => video.id === Number(id),
+    );
     if (videoIndex !== -1) {
       this.dbVideos.splice(videoIndex, 1);
       return true;
