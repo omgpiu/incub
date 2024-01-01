@@ -35,3 +35,7 @@ Content-Type: application/json
   "minAgeRestriction": 18,
   "publicationDate": "2024-01-01T16:21:43.628Z"
 }
+
+### Delete video by id
+DELETE {{baseUrl}}/videos/3
+Content-Type: application/json

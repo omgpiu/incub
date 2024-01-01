@@ -68,4 +68,14 @@ router.put(
   },
 );
 
+router.delete('/:id', (req: Request, res: Response) => {
+  const videoIndex = dbVideos.findIndex((video) => video.id === req.params.id);
+  if (videoIndex !== -1) {
+    dbVideos.splice(videoIndex, 1);
+    return res.status(204).end();
+  } else {
+    return res.status(404).send('Video not found');
+  }
+});
+
 export default router;
