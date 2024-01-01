@@ -9,7 +9,7 @@ export const RESOLUTION = [
   'P1440',
   'P2160',
 ];
-export const generateRandomResolution = (): string[] => {
+export const generateRandomResolution = () => {
   const count = faker.number.int({ min: 1, max: RESOLUTION.length });
   return faker.helpers.shuffle(RESOLUTION).slice(0, count);
 };

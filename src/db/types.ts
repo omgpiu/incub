@@ -1,5 +1,13 @@
 import { RESOLUTION } from './generate';
-import { dbVideos } from './videos';
 
 export type Resolution = (typeof RESOLUTION)[number];
-export type Video = (typeof dbVideos)[number];
+export interface Video {
+  id: string | number;
+  title: string;
+  author: string;
+  canBeDownloaded: boolean;
+  minAgeRestriction: null | number;
+  createdAt: string;
+  publicationDate: string;
+  availableResolutions: Resolution[];
+}

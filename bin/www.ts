@@ -5,7 +5,7 @@
  */
 import http from 'http';
 import debugModule from 'debug';
-import app from '../app'; // Assuming app is exported correctly in app.ts
+import app from '../src/app'; // Assuming app is exported correctly in app.ts
 
 const debug = debugModule('incub:server');
 
