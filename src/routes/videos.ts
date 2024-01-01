@@ -66,11 +66,11 @@ router.put(
 
 router.delete('/:id', (req: Request, res: Response) => {
   const isDeleteSuccessful = VideoManager.delete(req.params.id);
-  if (isDeleteSuccessful) {
-    return res.status(204).end();
-  } else {
+  if (!req.params.id || !isDeleteSuccessful) {
     return res.status(404).send('Video not found');
   }
+
+  return res.status(204).end();
 });
 
 export default router;
