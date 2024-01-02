@@ -9,14 +9,16 @@ export const baseInputValidation = [
     .bail()
     .isString()
     .withMessage('Tittle must be a string')
+    .bail()
     .isLength({ min: 1, max: 40 })
     .withMessage('Title must be between 1 and 40 characters long'),
   check('author')
     .notEmpty()
-    .withMessage('Author must be a string')
+    .withMessage('Author field is required')
     .bail()
     .isString()
     .withMessage('Author must be a string')
+    .bail()
     .isLength({ min: 1, max: 20 })
     .withMessage('Author name must be between 1 and 20 characters long'),
   check('availableResolutions')
@@ -60,6 +62,7 @@ export const putValidation = [
     .bail()
     .isISO8601()
     .withMessage('publicationDate must be a date in ISO 8601 format')
+    .bail()
     .custom((value) => {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
       return regex.test(value) && isValid(parseISO(value));
