@@ -28,9 +28,10 @@ export class App {
     logger: LoggerService,
     videoController: VideoController,
     exeptionFilter: ExeptionFilter,
+    port?: number,
   ) {
     this.app = express();
-    this.port = this.normalizePort(process.env.PORT || 3000);
+    this.port = this.normalizePort(port || process.env.PORT || 3000);
     this.logger = logger;
     this.videoController = videoController;
     this.exceptionFilter = exeptionFilter;
@@ -48,12 +49,21 @@ export class App {
 
   useRoutes() {
     this.app.use('/', homeRouter);
-    this.app.use('/testing/all-data', testRouter);
+    this.app.use('/testing', testRouter);
     this.app.use('/videos', this.videoController.router);
   }
 
   useExeptionFilters() {
-    this.app.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
+    this.app.use(
+      (err: Error, req: Request, res: Response, next: NextFunction) => {
+        this.exceptionFilter.catch.bind(this.exceptionFilter)(
+          err,
+          req,
+          res,
+          next,
+        );
+      },
+    );
   }
 
   errorHandler: ErrorRequestHandler = (err, req, res) => {
@@ -64,7 +74,11 @@ export class App {
     res.status(err.status || 500);
     res.render('error');
   };
-
+  public async stop(): Promise<void> {
+    if (this.server) {
+      this.server.close();
+    }
+  }
   public async start() {
     this.app.set('views', path.join(__dirname, '../views'));
     this.app.set('view engine', 'pug');
@@ -78,8 +92,8 @@ export class App {
     this.app.use(function (req: Request, res: Response, next: NextFunction) {
       next(createError(404));
     });
-    this.useExeptionFilters();
     this.app.use(this.errorHandler);
+    // this.useExeptionFilters();
     this.server = this.app.listen(this.port, () => {
       this.logger.log(`Server running at http://localhost:${this.port}/`);
     });
