@@ -1,2 +1,2 @@
 export { RESOLUTION } from './generate';
-export { VideoManager } from './Video';
+export { VideoDB } from './Video';

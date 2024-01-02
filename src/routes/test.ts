@@ -1,10 +1,10 @@
 import express, { Request, Response, Router } from 'express';
-import { VideoManager } from '../db';
+import { VideoDB } from '../db';
 
-const router: Router = express.Router();
-router.delete('/all-data', (req: Request, res: Response) => {
-  VideoManager.deleteAll();
+const testRouter: Router = express.Router();
+testRouter.delete('/all-data', (req: Request, res: Response) => {
+  VideoDB.deleteAll();
   return res.status(204).send('All data is deleted').end();
 });
 
-export default router;
+export { testRouter };
