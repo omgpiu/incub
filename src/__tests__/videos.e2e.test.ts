@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { App } from '../app';
 import { Express } from 'express';
-import { bootstrap } from '../main';
+import bootstrap from '../main';
 
 describe('Videos', () => {
   let appInstance: App;
