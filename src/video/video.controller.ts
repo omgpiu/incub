@@ -2,22 +2,46 @@ import { Request, Response } from 'express';
 import { LoggerService } from '../logger/logger';
 import { BaseController } from '../common/base.controller';
 import { VideoDB } from '../db';
-import { baseInputValidation } from '../videos';
+import { ValidateMiddleware } from '../common/validate.middleware';
+import { baseInputValidation, putValidation } from '../videos';
+import { ValidationChain } from 'express-validator';
 
 export class VideoController extends BaseController {
+  private postValidation: ValidationChain[];
+  private putValidation: ValidationChain[];
   constructor(logger: LoggerService) {
     super(logger);
+    this.postValidation = baseInputValidation;
+    this.putValidation = [...baseInputValidation, ...putValidation];
+
     this.bindRoutes([
-      { path: '/', middleware: this.getAll, method: 'get' },
+      { path: '/', func: this.getAll, method: 'get' },
       {
         path: '/',
-        middleware: [this.validate(baseInputValidation), this.create],
+        func: this.create,
         method: 'post',
+        middlewares: [new ValidateMiddleware(this.postValidation)],
       },
-      { path: '/:id', middleware: this.getById, method: 'get' },
-      { path: '/:id', middleware: this.update, method: 'put' },
-      { path: '/:id', middleware: this.delete, method: 'delete' },
+      { path: '/:id', func: this.getById, method: 'get' },
+      {
+        path: '/:id',
+        func: this.update,
+        method: 'put',
+        middlewares: [new ValidateMiddleware(this.putValidation)],
+      },
+      { path: '/:id', func: this.delete, method: 'delete' },
     ]);
+  }
+
+  async create(req: Request, res: Response) {
+    const resPayload = {
+      title: req.body.title,
+      author: req.body.author,
+      availableResolutions: req.body.availableResolutions,
+    };
+
+    const responce = VideoDB.create(resPayload);
+    res.status(201).json(responce);
   }
 
   async getAll(req: Request, res: Response) {
@@ -31,17 +55,6 @@ export class VideoController extends BaseController {
     } else {
       res.status(404).json({ message: 'Video not found' });
     }
-  }
-
-  async create(req: Request, res: Response) {
-    const resPayload = {
-      title: req.body.title,
-      author: req.body.author,
-      availableResolutions: req.body.availableResolutions,
-    };
-
-    const responce = VideoDB.create(resPayload);
-    res.status(201).json(responce);
   }
 
   async update(req: Request, res: Response) {
