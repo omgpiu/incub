@@ -12,8 +12,8 @@ import logger from 'morgan';
 import { Server } from 'http';
 
 import { ILogger, IExceptionFilter } from './common';
-import { VideosController } from './videos/videos.controller';
 import { UtilsController } from './utils';
+import { VideosController } from './videos';
 
 export class App {
   app: Express;
@@ -71,7 +71,7 @@ export class App {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-      res.status(err.status || 500);
+    res.status(err.status || 500);
     res.render('error');
   };
   public async stop(): Promise<void> {
