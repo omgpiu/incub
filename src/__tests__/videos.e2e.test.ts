@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { App } from '../app';
+import App from '../app';
 import { Express } from 'express';
 import { bootstrap } from '../main';
 
