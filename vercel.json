@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "name": "music-album",
+  "name": "incub",
   "builds": [
-    { "src": "src/app.ts", "use": "@vercel/node" }
+    { "src": "src/main.ts", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "src/app.ts" }
+    { "src": "/(.*)", "dest": "src/main.ts" }
   ]
 }
