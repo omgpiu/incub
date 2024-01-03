@@ -12,7 +12,11 @@ POST {{baseUrl}}/videos
 Content-Type: application/json
 
 {
-
+  "title": "string",
+  "author": "string",
+  "availableResolutions": [
+    "P144"
+  ]
 }
 
 ### Get video by id
