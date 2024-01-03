@@ -1,8 +1,8 @@
 import { check } from 'express-validator';
-import { RESOLUTION } from '../db';
+import { RESOLUTION } from './db';
 import { isValid, parseISO } from 'date-fns';
 
-export const baseInputValidation = [
+export const baseValidation = [
   check('title')
     .notEmpty()
     .withMessage('Title is required')

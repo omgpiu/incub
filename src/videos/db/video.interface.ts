@@ -1,6 +1,5 @@
-import { RESOLUTION } from './generate';
+import { ResolutionType } from './resolution.type';
 
-export type Resolution = (typeof RESOLUTION)[number];
 export interface Video {
   id: number;
   title: string;
@@ -9,5 +8,5 @@ export interface Video {
   minAgeRestriction: null | number;
   createdAt: string;
   publicationDate: string;
-  availableResolutions: Resolution[];
+  availableResolutions: ResolutionType[];
 }
