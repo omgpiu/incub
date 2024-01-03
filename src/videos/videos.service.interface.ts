@@ -1,10 +1,10 @@
 import { VideosCreateDto, VideosUpdateDto } from './dto';
-import { Video } from './db/video.interface';
+import { IVideo } from './video.interface';
 
 export interface IVideosService {
-  createVideo: (dto: VideosCreateDto) => Promise<Video | null>;
-  updateVideo: (id: string, dto: VideosUpdateDto) => Promise<Video | null>;
-  getAll: () => Promise<Video[]>;
-  getById: (id: string) => Promise<Video | null>;
+  createVideo: (dto: VideosCreateDto) => Promise<IVideo | null>;
+  updateVideo: (id: string, dto: VideosUpdateDto) => Promise<IVideo | null>;
+  getAll: () => Promise<IVideo[]>;
+  getById: (id: string) => Promise<IVideo | null>;
   deleteVideo: (id: string) => Promise<boolean>;
 }

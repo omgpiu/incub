@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { Server } from 'http';
 
-import { ILogger, IExceptionFilter } from './common';
+import { IExceptionFilter, ILogger } from './common';
 import { UtilsController } from './utils';
 import { VideosController } from './videos';
 
@@ -74,11 +74,13 @@ export class App {
     res.status(err.status || 500);
     res.render('error');
   };
+
   public async stop(): Promise<void> {
     if (this.server) {
       this.server.close();
     }
   }
+
   public async start() {
     this.app.set('views', path.join(__dirname, '../views'));
     this.app.set('view engine', 'pug');
