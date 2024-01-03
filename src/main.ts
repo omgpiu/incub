@@ -1,4 +1,4 @@
-import { App } from './app';
+import App from './app';
 import { LoggerService, ExceptionFilter } from './common';
 
 import { VideosController } from './videos';
