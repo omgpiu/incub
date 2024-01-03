@@ -4,28 +4,29 @@ import { Express } from 'express';
 import { bootstrap } from '../main';
 
 describe('Videos', () => {
-  let appInstance: App;
+  let instance: App;
 
-  let app: Express;
+  let appExpress: Express;
 
   beforeAll(async () => {
-    appInstance = await bootstrap(6000);
+    const { appInstance, app } = await bootstrap(6000);
 
-    app = appInstance.app;
+    instance = appInstance;
+    appExpress = app;
 
-    await request(app).delete('/testing/all-data').expect(204);
+    await request(appExpress).delete('/testing/all-data').expect(204);
   });
 
   afterAll(async () => {
-    await appInstance.stop();
+    await instance.stop();
   });
 
   it('GET videos after clear db', async () => {
-    await request(app).get('/videos').expect([]);
+    await request(appExpress).get('/videos').expect([]);
   });
 
   it('GET video by id success', async () => {
-    const res = await request(app)
+    const res = await request(appExpress)
       .post('/videos')
       .send({
         title: 'string',
@@ -33,17 +34,17 @@ describe('Videos', () => {
         availableResolutions: ['P144'],
       });
 
-    await request(app).get(`/videos/${res.body.id}`).expect(200);
+    await request(appExpress).get(`/videos/${res.body.id}`).expect(200);
   });
 
   it('GET video by id with error', async () => {
-    await request(app)
+    await request(appExpress)
       .get(`/videos/00000000000000`)
       .expect(404, { message: 'Video not found' });
   });
 
   it('POST created video success', async () => {
-    await request(app)
+    await request(appExpress)
       .post('/videos')
       .send({
         title: 'string',
@@ -54,7 +55,7 @@ describe('Videos', () => {
   });
 
   it('POST not created video with error', async () => {
-    await request(app)
+    await request(appExpress)
       .post(`/videos`)
       .expect(400, {
         errorsMessages: [
@@ -69,7 +70,7 @@ describe('Videos', () => {
   });
 
   it('PUT update video by id success', async () => {
-    const res = await request(app)
+    const res = await request(appExpress)
       .post('/videos')
       .send({
         title: 'string',
@@ -77,7 +78,7 @@ describe('Videos', () => {
         availableResolutions: ['P144'],
       });
 
-    await request(app)
+    await request(appExpress)
       .put(`/videos/${res.body.id}`)
       .send({
         title: 'string',
@@ -91,7 +92,9 @@ describe('Videos', () => {
   });
 
   it('PUT not update video by id with error', async () => {
-    const response = await request(app).put(`/videos/44444444`).expect(400);
+    const response = await request(appExpress)
+      .put(`/videos/44444444`)
+      .expect(400);
 
     const errors = response.body.errorsMessages;
 
@@ -126,7 +129,7 @@ describe('Videos', () => {
   });
 
   it('DELETE delete video by id success', async () => {
-    const res = await request(app)
+    const res = await request(appExpress)
       .post('/videos')
       .send({
         title: 'string',
@@ -134,11 +137,11 @@ describe('Videos', () => {
         availableResolutions: ['P144'],
       });
 
-    await request(app).delete(`/videos/${res.body.id}`).expect(204);
+    await request(appExpress).delete(`/videos/${res.body.id}`).expect(204);
   });
 
   it('DELETE not delete video by id with error', async () => {
-    await request(app)
+    await request(appExpress)
       .delete(`/videos/0000000000`)
       .expect(404, { message: 'Video not found' });
   });
