@@ -1,11 +1,11 @@
-import App from './app';
+import { App } from './app';
 import { LoggerService, ExceptionFilter } from './common';
 
 import { VideosController } from './videos';
 import { UtilsController } from './utils';
 import { VideosService } from './videos';
 
-async function bootstrap(port?: number) {
+export async function bootstrap(port?: number) {
   const logger = new LoggerService();
   const videosController = new VideosController(logger, new VideosService());
   const exceptionFilter = new ExceptionFilter(logger);
@@ -21,7 +21,7 @@ async function bootstrap(port?: number) {
 
   await appInstance.start();
 
-  return appInstance;
+  return { appInstance, app: appInstance.app };
 }
 
-export { bootstrap };
+export const boot = bootstrap();

@@ -1,11 +1,12 @@
 {
   "name": "incub",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
+  "main": "main.js",
   "scripts": {
     "build": "tsc",
-    "start": "node ./dist/bin/www",
-    "dev": "ts-node-dev ./bin/www",
+    "start": "node ./dist/main.js",
+    "dev": "ts-node-dev ./src/main.ts",
     "jest": "jest",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "format": "prettier --write '*/**/*.{js,ts,tsx,json,md}'"
