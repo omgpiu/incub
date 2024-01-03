@@ -15,7 +15,7 @@ import { IExceptionFilter, ILogger } from './common';
 import { UtilsController } from './utils';
 import { VideosController } from './videos';
 
-export class App {
+export default class App {
   app: Express;
   server: Server;
   port: number;

@@ -7,7 +7,7 @@
 import http from 'http';
 import debugModule from 'debug';
 import { bootstrap } from '../src/main';
-import { App } from '../src/app';
+import App from '../src/app';
 
 const debug = debugModule('incub:server');
 
