@@ -1,6 +1,6 @@
-import { ResolutionType } from './resolution.type';
+import { ResolutionType } from './db';
 
-export interface Video {
+export interface IVideo {
   id: number;
   title: string;
   author: string;

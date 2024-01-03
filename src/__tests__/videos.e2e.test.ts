@@ -38,7 +38,7 @@ describe('Videos', () => {
 
   it('GET video by id with error', async () => {
     await request(app)
-      .get(`/videos/44444444444`)
+      .get(`/videos/00000000000000`)
       .expect(404, { message: 'Video not found' });
   });
 
@@ -139,7 +139,7 @@ describe('Videos', () => {
 
   it('DELETE not delete video by id with error', async () => {
     await request(app)
-      .delete(`/videos/555555555`)
+      .delete(`/videos/0000000000`)
       .expect(404, { message: 'Video not found' });
   });
 });

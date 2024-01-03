@@ -39,7 +39,7 @@ Content-Type: application/json
 }
 
 ### Delete video by id
-DELETE {{baseUrl}}/videos/1
+DELETE {{baseUrl}}/videos/00000000000
 Content-Type: application/json
 ### Delete ALL
 DELETE {{baseUrl}}/testing/all-data

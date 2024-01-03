@@ -19,6 +19,7 @@ export class ValidateMiddleware implements IMiddleware {
     await Promise.all(this.rules.map((validation) => validation.run(req)));
 
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       const formattedErrors = formatErrors(
         errors as Result<FieldValidationError>,
