@@ -24,4 +24,4 @@ async function bootstrap(port?: number) {
   return appInstance;
 }
 
-export default bootstrap;
+export { bootstrap };
