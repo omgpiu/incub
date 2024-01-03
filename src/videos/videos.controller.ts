@@ -1,18 +1,16 @@
 import { Request, Response } from 'express';
-import { LoggerService } from '../logger/logger';
-import { BaseController } from '../common/base.controller';
-import { VideoDB } from '../db';
-import { ValidateMiddleware } from '../common/validate.middleware';
-import { baseInputValidation, putValidation } from '../videos';
+import { ILogger, BaseController, ValidateMiddleware } from '../common';
+import { VideosDB } from './db';
 import { ValidationChain } from 'express-validator';
+import { baseValidation, putValidation } from './validation';
 
-export class VideoController extends BaseController {
-  private postValidation: ValidationChain[];
-  private putValidation: ValidationChain[];
-  constructor(logger: LoggerService) {
+export class VideosController extends BaseController {
+  private readonly postValidation: ValidationChain[];
+  private readonly putValidation: ValidationChain[];
+  constructor(logger: ILogger) {
     super(logger);
-    this.postValidation = baseInputValidation;
-    this.putValidation = [...baseInputValidation, ...putValidation];
+    this.postValidation = baseValidation;
+    this.putValidation = [...baseValidation, ...putValidation];
 
     this.bindRoutes([
       { path: '/', func: this.getAll, method: 'get' },
@@ -40,16 +38,16 @@ export class VideoController extends BaseController {
       availableResolutions: req.body.availableResolutions,
     };
 
-    const responce = VideoDB.create(resPayload);
+    const responce = VideosDB.create(resPayload);
     res.status(201).json(responce);
   }
 
   async getAll(req: Request, res: Response) {
-    res.send(VideoDB.getAll());
+    res.send(VideosDB.getAll());
   }
 
   async getById(req: Request, res: Response) {
-    const video = VideoDB.getById(req.params.id);
+    const video = VideosDB.getById(req.params.id);
     if (video) {
       res.status(200).json(video);
     } else {
@@ -58,7 +56,7 @@ export class VideoController extends BaseController {
   }
 
   async update(req: Request, res: Response) {
-    const updatedVideo = VideoDB.update(req.params.id, {
+    const updatedVideo = VideosDB.update(req.params.id, {
       title: req.body.title,
       author: req.body.author,
       canBeDownloaded: req.body.canBeDownloaded,
@@ -75,7 +73,7 @@ export class VideoController extends BaseController {
   }
 
   async delete(req: Request, res: Response) {
-    const isDeleteSuccessful = VideoDB.delete(req.params.id);
+    const isDeleteSuccessful = VideosDB.delete(req.params.id);
     if (!req.params.id || !isDeleteSuccessful) {
       res.status(404).send({ message: 'Video not found' });
       return;

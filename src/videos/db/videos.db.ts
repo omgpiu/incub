@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { generateRandomResolution } from './generate';
-import { Video } from './types';
+import { generateRandomResolution } from './data.generator';
+import { Video } from './video.interface';
 
-export class VideoDB {
+export class VideosDB {
   static dbVideos: Video[] = Array.from({ length: 10 }, (_, id) => ({
     id: id < 3 ? id : faker.number.int(),
     title: faker.lorem.sentence(),

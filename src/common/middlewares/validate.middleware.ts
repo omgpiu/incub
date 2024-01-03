@@ -1,4 +1,3 @@
-import { IMiddleware } from './route.interface';
 import { NextFunction, Request, Response } from 'express';
 import {
   FieldValidationError,
@@ -7,6 +6,7 @@ import {
   validationResult,
 } from 'express-validator';
 import { formatErrors } from '../helpers';
+import { IMiddleware } from '../interfaces';
 
 export class ValidateMiddleware implements IMiddleware {
   rules: ValidationChain[];

@@ -10,31 +10,33 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { Server } from 'http';
-import { LoggerService } from './logger/logger';
-import { ExeptionFilter } from './error/exeption.filter';
-import { VideoController } from './video/video.controller';
-import { homeRouter } from './routes';
-import { testRouter } from './routes/test';
+
+import { ILogger, IExceptionFilter } from './common';
+import { VideosController } from './videos/videos.controller';
+import { UtilsController } from './utils';
 
 export class App {
   app: Express;
   server: Server;
   port: number;
-  logger: LoggerService;
-  videoController: VideoController;
-  exceptionFilter: ExeptionFilter;
+  logger: ILogger;
+  videosController: VideosController;
+  exceptionFilter: IExceptionFilter;
+  utilsController: UtilsController;
 
   constructor(
-    logger: LoggerService,
-    videoController: VideoController,
-    exeptionFilter: ExeptionFilter,
+    logger: ILogger,
+    videosController: VideosController,
+    exceptionFilter: IExceptionFilter,
+    utilsController: UtilsController,
     port?: number,
   ) {
     this.app = express();
     this.port = this.normalizePort(port || process.env.PORT || 3000);
     this.logger = logger;
-    this.videoController = videoController;
-    this.exceptionFilter = exeptionFilter;
+    this.videosController = videosController;
+    this.exceptionFilter = exceptionFilter;
+    this.utilsController = utilsController;
   }
 
   private normalizePort(val: string | number): number {
@@ -48,12 +50,11 @@ export class App {
   }
 
   useRoutes() {
-    this.app.use('/', homeRouter);
-    this.app.use('/testing', testRouter);
-    this.app.use('/videos', this.videoController.router);
+    this.app.use('/', this.utilsController.router);
+    this.app.use('/videos', this.videosController.router);
   }
 
-  useExeptionFilters() {
+  useExceptionFilters() {
     this.app.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         this.exceptionFilter.catch.bind(this.exceptionFilter)(
@@ -70,7 +71,6 @@ export class App {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
     res.status(err.status || 500);
     res.render('error');
   };
@@ -93,7 +93,7 @@ export class App {
       next(createError(404));
     });
     this.app.use(this.errorHandler);
-    // this.useExeptionFilters();
+    // this.useExceptionFilters();
     this.server = this.app.listen(this.port, () => {
       this.logger.log(`Server running at http://localhost:${this.port}/`);
     });
