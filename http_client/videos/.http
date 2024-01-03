@@ -1,5 +1,7 @@
 @baseUrl = http://localhost:3000
 
+GET {{baseUrl}}/
+Accept: application/json
 ### Get Videos
 GET {{baseUrl}}/videos
 Accept: application/json
@@ -37,7 +39,7 @@ Content-Type: application/json
 }
 
 ### Delete video by id
-DELETE {{baseUrl}}/videos/3
+DELETE {{baseUrl}}/videos/1
 Content-Type: application/json
 ### Delete ALL
 DELETE {{baseUrl}}/testing/all-data

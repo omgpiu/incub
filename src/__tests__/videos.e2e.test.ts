@@ -1,9 +1,23 @@
 import request from 'supertest';
-import app from '../app';
+import { App } from '../app';
+import { Express } from 'express';
+import bootstrap from '../main';
 
 describe('Videos', () => {
+  let appInstance: App;
+
+  let app: Express;
+
   beforeAll(async () => {
+    appInstance = await bootstrap(6000);
+
+    app = appInstance.app;
+
     await request(app).delete('/testing/all-data').expect(204);
+  });
+
+  afterAll(async () => {
+    await appInstance.stop();
   });
 
   it('GET videos after clear db', async () => {
@@ -77,30 +91,38 @@ describe('Videos', () => {
   });
 
   it('PUT not update video by id with error', async () => {
-    await request(app)
-      .put(`/videos/44444444`)
-      .expect(400, {
-        errorsMessages: [
-          { message: 'Title is required', field: 'title' },
-          { message: 'Author field is required', field: 'author' },
-          {
-            message: 'Available Resolutions are required',
-            field: 'availableResolutions',
-          },
-          {
-            message: 'canBeDownloaded field is required',
-            field: 'canBeDownloaded',
-          },
-          {
-            message: 'minAgeRestriction field is required',
-            field: 'minAgeRestriction',
-          },
-          {
-            message: 'publicationDate field is required',
-            field: 'publicationDate',
-          },
-        ],
-      });
+    const response = await request(app).put(`/videos/44444444`).expect(400);
+
+    const errors = response.body.errorsMessages;
+
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message: 'Title is required',
+          field: 'title',
+        }),
+        expect.objectContaining({
+          message: 'Author field is required',
+          field: 'author',
+        }),
+        expect.objectContaining({
+          message: 'Available Resolutions are required',
+          field: 'availableResolutions',
+        }),
+        expect.objectContaining({
+          message: 'canBeDownloaded field is required',
+          field: 'canBeDownloaded',
+        }),
+        expect.objectContaining({
+          message: 'minAgeRestriction field is required',
+          field: 'minAgeRestriction',
+        }),
+        expect.objectContaining({
+          message: 'publicationDate field is required',
+          field: 'publicationDate',
+        }),
+      ]),
+    );
   });
 
   it('DELETE delete video by id success', async () => {

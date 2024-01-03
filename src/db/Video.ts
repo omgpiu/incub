@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { generateRandomResolution } from './generate';
 import { Video } from './types';
 
-export class VideoManager {
+export class VideoDB {
   static dbVideos: Video[] = Array.from({ length: 10 }, (_, id) => ({
     id: id < 3 ? id : faker.number.int(),
     title: faker.lorem.sentence(),

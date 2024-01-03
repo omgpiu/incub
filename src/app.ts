@@ -1,7 +1,7 @@
 import createError from 'http-errors';
 import express, {
-  Application,
   ErrorRequestHandler,
+  Express,
   NextFunction,
   Request,
   Response,
@@ -9,43 +9,93 @@ import express, {
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import { Server } from 'http';
+import { LoggerService } from './logger/logger';
+import { ExeptionFilter } from './error/exeption.filter';
+import { VideoController } from './video/video.controller';
+import { homeRouter } from './routes';
+import { testRouter } from './routes/test';
 
-import indexRouter from './routes/index'; // Ensure these are exported as modules
-import videosRouter from './routes/videos';
-import testingRouter from './routes/test';
+export class App {
+  app: Express;
+  server: Server;
+  port: number;
+  logger: LoggerService;
+  videoController: VideoController;
+  exceptionFilter: ExeptionFilter;
 
-const app: Application = express();
+  constructor(
+    logger: LoggerService,
+    videoController: VideoController,
+    exeptionFilter: ExeptionFilter,
+    port?: number,
+  ) {
+    this.app = express();
+    this.port = this.normalizePort(port || process.env.PORT || 3000);
+    this.logger = logger;
+    this.videoController = videoController;
+    this.exceptionFilter = exeptionFilter;
+  }
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+  private normalizePort(val: string | number): number {
+    const port = parseInt(val as string, 10);
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+    if (isNaN(port) || port < 0) {
+      throw new Error(`Invalid port: ${val}`);
+    }
 
-app.use('/', indexRouter);
-app.use('/testing', testingRouter);
-app.use('/videos', videosRouter);
+    return port;
+  }
 
-// catch 404 and forward to error handler
-app.use(function (req: Request, res: Response, next: NextFunction) {
-  next(createError(404));
-});
+  useRoutes() {
+    this.app.use('/', homeRouter);
+    this.app.use('/testing', testRouter);
+    this.app.use('/videos', this.videoController.router);
+  }
 
-// error handler
-const errorHandler: ErrorRequestHandler = (err, req, res) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  useExeptionFilters() {
+    this.app.use(
+      (err: Error, req: Request, res: Response, next: NextFunction) => {
+        this.exceptionFilter.catch.bind(this.exceptionFilter)(
+          err,
+          req,
+          res,
+          next,
+        );
+      },
+    );
+  }
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-};
+  errorHandler: ErrorRequestHandler = (err, req, res) => {
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-app.use(errorHandler);
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  };
+  public async stop(): Promise<void> {
+    if (this.server) {
+      this.server.close();
+    }
+  }
+  public async start() {
+    this.app.set('views', path.join(__dirname, '../views'));
+    this.app.set('view engine', 'pug');
 
-export default app;
+    this.app.use(logger('dev'));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(cookieParser());
+    this.app.use(express.static(path.join(__dirname, '../public')));
+    this.useRoutes();
+    this.app.use(function (req: Request, res: Response, next: NextFunction) {
+      next(createError(404));
+    });
+    this.app.use(this.errorHandler);
+    // this.useExeptionFilters();
+    this.server = this.app.listen(this.port, () => {
+      this.logger.log(`Server running at http://localhost:${this.port}/`);
+    });
+  }
+}
