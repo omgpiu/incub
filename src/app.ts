@@ -49,12 +49,12 @@ export default class App {
     return port;
   }
 
-  useRoutes() {
+  private useRoutes() {
     this.app.use('/', this.utilsController.router);
     this.app.use('/videos', this.videosController.router);
   }
 
-  useExceptionFilters() {
+  private useExceptionFilters() {
     this.app.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         this.exceptionFilter.catch.bind(this.exceptionFilter)(
@@ -67,7 +67,7 @@ export default class App {
     );
   }
 
-  errorHandler: ErrorRequestHandler = (err, req, res) => {
+  private errorHandler: ErrorRequestHandler = (err, req, res) => {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
