@@ -6,6 +6,7 @@ import {
   BaseController,
   ILogger,
   RequestWithBody,
+  RequestWithQuery,
   TYPES,
   ValidateMiddleware,
 } from '../../common';
@@ -66,7 +67,7 @@ export class VideosController
     res.status(200).json(videos);
   }
 
-  async getById(req: Request, res: Response) {
+  async getById(req: RequestWithQuery<{ id?: string }>, res: Response) {
     await this.handleWithId(req, res, (id) => this.videosService.getById(id));
   }
 
