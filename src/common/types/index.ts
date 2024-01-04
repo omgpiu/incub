@@ -3,3 +3,4 @@ export {
   RequestWithQuery,
   RequestWithBodyParams,
 } from './request';
+export { TYPES } from './types';

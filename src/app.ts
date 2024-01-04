@@ -11,11 +11,10 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { Server } from 'http';
 import 'reflect-metadata';
-import { IExceptionFilter, ILogger } from './common';
+import { IExceptionFilter, ILogger, TYPES } from './common';
 import { UtilsController } from './utils';
 import { VideosController } from './videos';
 import { inject, injectable } from 'inversify';
-import { TYPES } from './common/types/types';
 
 @injectable()
 export default class App {

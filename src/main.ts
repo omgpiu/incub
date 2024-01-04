@@ -4,12 +4,12 @@ import {
   IExceptionFilter,
   ILogger,
   LoggerService,
+  TYPES,
 } from './common';
 
 import { VideosController, VideosService } from './videos';
 import { UtilsController } from './utils';
 import { Container, ContainerModule, interfaces } from 'inversify';
-import { TYPES } from './common/types/types';
 import { Express } from 'express';
 
 export interface IBootstrapReturn {

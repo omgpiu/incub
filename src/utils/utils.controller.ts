@@ -1,8 +1,7 @@
-import { BaseController, ILogger } from '../common';
+import { BaseController, ILogger, TYPES } from '../common';
 import { Request, Response } from 'express';
 import { VideosDB } from '../videos/db';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../common/types/types';
 import 'reflect-metadata';
 
 @injectable()

@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
-import { ILogger, BaseController, ValidateMiddleware } from '../common';
+import { ILogger, BaseController, ValidateMiddleware, TYPES } from '../common';
 import { ValidationChain } from 'express-validator';
 import { baseValidation, putValidation } from './validation';
 import { IVideosService } from './videos.service.interface';
 import { VideosCreateDto, VideosUpdateDto } from './dto';
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../common/types/types';
 
 @injectable()
 export class VideosController extends BaseController {

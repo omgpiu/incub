@@ -3,7 +3,7 @@ import { IExceptionFilter } from './exeption.filter.interface';
 import { HttpError } from './http-error.class';
 import { ILogger } from '../logger';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../types/types';
+import { TYPES } from '../types';
 @injectable()
 export class ExceptionFilter implements IExceptionFilter {
   constructor(@inject(TYPES.ILogger) private logger: ILogger) {}
