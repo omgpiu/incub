@@ -1,2 +1,2 @@
-export { VideosUpdateDto } from './videos-update.dto';
-export { VideosCreateDto } from './videos-create.dto';
+export { VideoUpdateDto } from './video-update.dto';
+export { VideoCreateDto } from './video-create.dto';

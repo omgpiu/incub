@@ -5,14 +5,15 @@ import { inject, injectable } from 'inversify';
 import {
   BaseController,
   ILogger,
+  RequestWithBody,
   TYPES,
   ValidateMiddleware,
 } from '../../common';
 import { baseValidation, putValidation } from '../validation';
 import { IVideosService } from '../service';
-import { VideosCreateDto, VideosUpdateDto } from '../dto';
+import { VideoCreateDto, VideoUpdateDto } from '../dto';
 import { IVideosController } from './videos.controller.interface';
-
+import { BasePramPayload, RequestWithBodyParams } from '../../common/types';
 @injectable()
 export class VideosController
   extends BaseController
@@ -21,6 +22,7 @@ export class VideosController
   private readonly postValidation: ValidationChain[];
   private readonly putValidation: ValidationChain[];
   private readonly videosService: IVideosService;
+
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
     @inject(TYPES.VideosService) videosService: IVideosService,
@@ -49,10 +51,8 @@ export class VideosController
     ]);
   }
 
-  async create(req: Request, res: Response) {
-    const video = await this.videosService.createVideo(
-      req.body as VideosCreateDto,
-    );
+  async create(req: RequestWithBody<VideoCreateDto>, res: Response) {
+    const video = await this.videosService.createVideo(req.body);
 
     if (!video) {
       res.status(400).json({ errorMessage: 'Bad request' });
@@ -67,37 +67,27 @@ export class VideosController
   }
 
   async getById(req: Request, res: Response) {
-    const video = await this.videosService.getById(req.params.id);
-    if (video) {
-      res.status(200).json(video);
-    } else {
-      res.status(404).json({ message: 'Video not found' });
-    }
+    await this.handleWithId(req, res, (id) => this.videosService.getById(id));
   }
 
-  async update(req: Request, res: Response) {
-    const updatedVideo = await this.videosService.updateVideo(
-      req.params.id,
-      req.body as VideosUpdateDto,
+  async update(
+    req: RequestWithBodyParams<BasePramPayload, VideoUpdateDto>,
+    res: Response,
+  ) {
+    await this.handleWithId(
+      req,
+      res,
+      (id) => this.videosService.updateVideo(id, req.body),
+      204,
     );
-
-    if (updatedVideo) {
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: 'Video not found' });
-    }
   }
 
-  async delete(req: Request, res: Response) {
-    const isDeleteSuccessful = await this.videosService.deleteVideo(
-      req.params.id,
+  async delete(req: Request<BasePramPayload>, res: Response) {
+    await this.handleWithId(
+      req,
+      res,
+      (id) => this.videosService.deleteVideo(id),
+      204,
     );
-
-    if (!req.params.id || !isDeleteSuccessful) {
-      res.status(404).send({ message: 'Video not found' });
-      return;
-    }
-
-    res.status(204).end();
   }
 }

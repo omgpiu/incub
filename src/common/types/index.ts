@@ -1,6 +1,2 @@
-export {
-  RequestWithBody,
-  RequestWithQuery,
-  RequestWithBodyParams,
-} from './request';
+export * from './request';
 export { TYPES } from './types';

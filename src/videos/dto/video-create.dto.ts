@@ -1,10 +1,7 @@
 import { ResolutionType } from '../db';
 
-export class VideosUpdateDto {
+export class VideoCreateDto {
   title: string;
   author: string;
   availableResolutions: ResolutionType[];
-  canBeDownloaded: boolean;
-  minAgeRestriction: number;
-  publicationDate: string;
 }

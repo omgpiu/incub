@@ -1,8 +1,9 @@
-import { Response, Router } from 'express';
+import { Response, Router, Request } from 'express';
 import { ILogger } from '../logger';
 import { IControllerRoute } from '../interfaces';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
+import { BasePramPayload } from '../types';
 
 @injectable()
 export abstract class BaseController {
@@ -38,5 +39,31 @@ export abstract class BaseController {
 
   get router(): Router {
     return this._router;
+  }
+  protected async handleWithId<T, P extends BasePramPayload, B, Q>(
+    req: Request<P, object, B, Q>,
+    res: Response,
+    callback: (id: string) => Promise<T | null>,
+    successStatusCode: number = 200,
+    notFoundMessage: string = 'Item not found',
+  ): Promise<void> {
+    const id = req.params.id;
+    if (!id) {
+      res.status(404).json({ message: notFoundMessage });
+      return;
+    }
+
+    try {
+      const result = await callback(id);
+      if (result !== null) {
+        res.status(successStatusCode).json(result);
+      } else if (successStatusCode === 204) {
+        res.status(204).end();
+      } else {
+        res.status(404).json({ message: notFoundMessage });
+      }
+    } catch (error) {
+      res.status(400).json({ message: 'Some error occurred' });
+    }
   }
 }

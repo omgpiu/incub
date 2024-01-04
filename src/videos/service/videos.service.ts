@@ -1,4 +1,4 @@
-import { VideosCreateDto, VideosUpdateDto } from '../dto';
+import { VideoCreateDto, VideoUpdateDto } from '../dto';
 import { VideosDB } from '../db';
 import { IVideosService } from './videos.service.interface';
 import { IVideo } from '../entity';
@@ -7,14 +7,14 @@ import 'reflect-metadata';
 
 @injectable()
 export class VideosService implements IVideosService {
-  async createVideo(dto: VideosCreateDto): Promise<IVideo | null> {
+  async createVideo(dto: VideoCreateDto): Promise<IVideo | null> {
     return await VideosDB.create({
       title: dto.title,
       author: dto.author,
       availableResolutions: dto.availableResolutions,
     });
   }
-  async updateVideo(id: string, dto: VideosUpdateDto): Promise<IVideo | null> {
+  async updateVideo(id: string, dto: VideoUpdateDto): Promise<IVideo | null> {
     return await VideosDB.update(id, {
       title: dto.title,
       author: dto.author,
