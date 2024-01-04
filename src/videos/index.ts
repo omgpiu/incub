@@ -1,3 +1,2 @@
-export { VideosController } from './videos.controller';
-export { VideosService } from './videos.service';
-export { IVideosService } from './videos.service.interface';
+export { VideosController, IVideosController } from './controller';
+export { VideosService, IVideosService } from './service';

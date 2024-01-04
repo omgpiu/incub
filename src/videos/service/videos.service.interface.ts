@@ -1,5 +1,5 @@
-import { VideosCreateDto, VideosUpdateDto } from './dto';
-import { IVideo } from './video.interface';
+import { VideosCreateDto, VideosUpdateDto } from '../dto';
+import { IVideo } from '../entity';
 
 export interface IVideosService {
   createVideo: (dto: VideosCreateDto) => Promise<IVideo | null>;

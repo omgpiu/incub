@@ -7,8 +7,13 @@ import {
   TYPES,
 } from './common';
 
-import { VideosController, VideosService } from './videos';
-import { UtilsController } from './utils';
+import {
+  IVideosController,
+  IVideosService,
+  VideosController,
+  VideosService,
+} from './videos';
+import { IUtilsController, UtilsController } from './utils';
 import { Container, ContainerModule, interfaces } from 'inversify';
 import { Express } from 'express';
 
@@ -20,9 +25,9 @@ export interface IBootstrapReturn {
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
   bind<ILogger>(TYPES.ILogger).to(LoggerService);
-  bind<VideosService>(TYPES.VideosService).to(VideosService);
-  bind<VideosController>(TYPES.VideosController).to(VideosController);
-  bind<UtilsController>(TYPES.UtilsController).to(UtilsController);
+  bind<IVideosService>(TYPES.VideosService).to(VideosService);
+  bind<IVideosController>(TYPES.VideosController).to(VideosController);
+  bind<IUtilsController>(TYPES.UtilsController).to(UtilsController);
   bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
   bind<App>(TYPES.Application).to(App);
 });

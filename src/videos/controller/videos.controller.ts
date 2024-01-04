@@ -1,14 +1,23 @@
 import { Request, Response } from 'express';
-import { ILogger, BaseController, ValidateMiddleware, TYPES } from '../common';
 import { ValidationChain } from 'express-validator';
-import { baseValidation, putValidation } from './validation';
-import { IVideosService } from './videos.service.interface';
-import { VideosCreateDto, VideosUpdateDto } from './dto';
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
+import {
+  BaseController,
+  ILogger,
+  TYPES,
+  ValidateMiddleware,
+} from '../../common';
+import { baseValidation, putValidation } from '../validation';
+import { IVideosService } from '../service';
+import { VideosCreateDto, VideosUpdateDto } from '../dto';
+import { IVideosController } from './videos.controller.interface';
 
 @injectable()
-export class VideosController extends BaseController {
+export class VideosController
+  extends BaseController
+  implements IVideosController
+{
   private readonly postValidation: ValidationChain[];
   private readonly putValidation: ValidationChain[];
   private readonly videosService: IVideosService;
@@ -46,7 +55,7 @@ export class VideosController extends BaseController {
     );
 
     if (!video) {
-      return res.status(400).json({ errorMessage: 'Bad request' });
+      res.status(400).json({ errorMessage: 'Bad request' });
     } else {
       res.status(201).json(video);
     }

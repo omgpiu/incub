@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { generateRandomResolution } from './data.generator';
-import { Video } from '../video.entity';
-import { IVideo } from '../video.interface';
+import { IVideo, Video } from '../entity';
 
 export class VideosDB {
   static dbVideos = Array.from(

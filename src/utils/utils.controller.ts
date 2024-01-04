@@ -3,9 +3,13 @@ import { Request, Response } from 'express';
 import { VideosDB } from '../videos/db';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+import { IUtilsController } from './utils.controller.inferface';
 
 @injectable()
-export class UtilsController extends BaseController {
+export class UtilsController
+  extends BaseController
+  implements IUtilsController
+{
   constructor(@inject(TYPES.ILogger) private loggerService: ILogger) {
     super(loggerService);
 

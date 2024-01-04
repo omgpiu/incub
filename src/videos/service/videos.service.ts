@@ -1,7 +1,7 @@
-import { VideosCreateDto, VideosUpdateDto } from './dto';
-import { VideosDB } from './db';
+import { VideosCreateDto, VideosUpdateDto } from '../dto';
+import { VideosDB } from '../db';
 import { IVideosService } from './videos.service.interface';
-import { IVideo } from './video.interface';
+import { IVideo } from '../entity';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 

@@ -1,4 +1,4 @@
-import { ResolutionType } from './db';
+import { ResolutionType } from '../db';
 
 export interface IVideo {
   id: number;
