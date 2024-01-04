@@ -44,10 +44,13 @@ export abstract class BaseController {
     req: Request<P, object, B, Q>,
     res: Response,
     callback: (id: string) => Promise<T | null>,
-    successStatusCode: number = 200,
-    notFoundMessage: string = 'Item not found',
+    options: {
+      code?: number;
+      entity?: 'Video';
+    },
   ): Promise<void> {
     const id = req.params.id;
+    const notFoundMessage = `${options.entity} not found`;
     if (!id) {
       res.status(404).json({ message: notFoundMessage });
       return;
@@ -55,9 +58,9 @@ export abstract class BaseController {
 
     try {
       const result = await callback(id);
-      if (result !== null) {
-        res.status(successStatusCode).json(result);
-      } else if (successStatusCode === 204) {
+      if (result) {
+        res.status(options.code ?? 200).json(result);
+      } else if (options.code === 204 && result) {
         res.status(204).end();
       } else {
         res.status(404).json({ message: notFoundMessage });

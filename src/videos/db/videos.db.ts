@@ -69,7 +69,7 @@ export class VideosDB {
       this.dbVideos.splice(videoIndex, 1);
       return true;
     }
-    return false;
+    return null;
   }
 
   static deleteAll() {

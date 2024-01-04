@@ -68,7 +68,10 @@ export class VideosController
   }
 
   async getById(req: RequestWithQuery<{ id?: string }>, res: Response) {
-    await this.handleWithId(req, res, (id) => this.videosService.getById(id));
+    await this.handleWithId(req, res, (id) => this.videosService.getById(id), {
+      code: 200,
+      entity: 'Video',
+    });
   }
 
   async update(
@@ -79,7 +82,10 @@ export class VideosController
       req,
       res,
       (id) => this.videosService.updateVideo(id, req.body),
-      204,
+      {
+        code: 204,
+        entity: 'Video',
+      },
     );
   }
 
@@ -88,7 +94,10 @@ export class VideosController
       req,
       res,
       (id) => this.videosService.deleteVideo(id),
-      204,
+      {
+        code: 204,
+        entity: 'Video',
+      },
     );
   }
 }

@@ -31,7 +31,7 @@ export class VideosService implements IVideosService {
   async getById(id: string): Promise<IVideo | null> {
     return await VideosDB.getById(id);
   }
-  async deleteVideo(id: string): Promise<boolean> {
+  async deleteVideo(id: string): Promise<boolean | null> {
     return await VideosDB.delete(id);
   }
 }

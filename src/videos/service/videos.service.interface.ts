@@ -6,5 +6,5 @@ export interface IVideosService {
   updateVideo: (id: string, dto: VideoUpdateDto) => Promise<IVideo | null>;
   getAll: () => Promise<IVideo[]>;
   getById: (id: string) => Promise<IVideo | null>;
-  deleteVideo: (id: string) => Promise<boolean>;
+  deleteVideo: (id: string) => Promise<boolean | null>;
 }
