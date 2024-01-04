@@ -10,33 +10,27 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { Server } from 'http';
-
+import 'reflect-metadata';
 import { IExceptionFilter, ILogger } from './common';
 import { UtilsController } from './utils';
 import { VideosController } from './videos';
+import { inject, injectable } from 'inversify';
+import { TYPES } from './common/types/types';
 
+@injectable()
 export default class App {
   app: Express;
   server: Server;
   port: number;
-  logger: ILogger;
-  videosController: VideosController;
-  exceptionFilter: IExceptionFilter;
-  utilsController: UtilsController;
 
   constructor(
-    logger: ILogger,
-    videosController: VideosController,
-    exceptionFilter: IExceptionFilter,
-    utilsController: UtilsController,
-    port?: number,
+    @inject(TYPES.ILogger) private loggerService: ILogger,
+    @inject(TYPES.VideosController) private videosController: VideosController,
+    @inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
+    @inject(TYPES.UtilsController) private utilsController: UtilsController,
   ) {
     this.app = express();
-    this.port = this.normalizePort(port || process.env.PORT || 3000);
-    this.logger = logger;
-    this.videosController = videosController;
-    this.exceptionFilter = exceptionFilter;
-    this.utilsController = utilsController;
+    this.port = this.normalizePort(process.env.PORT || 3000);
   }
 
   private normalizePort(val: string | number): number {
@@ -81,7 +75,7 @@ export default class App {
     }
   }
 
-  public async start() {
+  public async start(port: number = this.port) {
     this.app.set('views', path.join(__dirname, '../views'));
     this.app.set('view engine', 'pug');
 
@@ -96,8 +90,8 @@ export default class App {
     });
     this.app.use(this.errorHandler);
     // this.useExceptionFilters();
-    this.server = this.app.listen(this.port, () => {
-      this.logger.log(`Server running at http://localhost:${this.port}/`);
+    this.server = this.app.listen(port, () => {
+      this.loggerService.log(`Server running at http://localhost:${port}/`);
     });
   }
 }

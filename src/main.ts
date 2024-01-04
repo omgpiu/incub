@@ -1,27 +1,38 @@
 import App from './app';
-import { LoggerService, ExceptionFilter } from './common';
+import {
+  ExceptionFilter,
+  IExceptionFilter,
+  ILogger,
+  LoggerService,
+} from './common';
 
-import { VideosController } from './videos';
+import { VideosController, VideosService } from './videos';
 import { UtilsController } from './utils';
-import { VideosService } from './videos';
+import { Container, ContainerModule, interfaces } from 'inversify';
+import { TYPES } from './common/types/types';
+import { Express } from 'express';
 
-export async function bootstrap(port?: number) {
-  const logger = new LoggerService();
-  const videosController = new VideosController(logger, new VideosService());
-  const exceptionFilter = new ExceptionFilter(logger);
-  const utilsController = new UtilsController(logger);
+export interface IBootstrapReturn {
+  appContainer: Container;
+  app: App;
+  express: Express;
+}
 
-  const appInstance = new App(
-    logger,
-    videosController,
-    exceptionFilter,
-    utilsController,
-    port,
-  );
+export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
+  bind<ILogger>(TYPES.ILogger).to(LoggerService);
+  bind<VideosService>(TYPES.VideosService).to(VideosService);
+  bind<VideosController>(TYPES.VideosController).to(VideosController);
+  bind<UtilsController>(TYPES.UtilsController).to(UtilsController);
+  bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
+  bind<App>(TYPES.Application).to(App);
+});
 
-  await appInstance.start();
-
-  return { appInstance, app: appInstance.app };
+export async function bootstrap(port?: number): Promise<IBootstrapReturn> {
+  const appContainer = new Container();
+  appContainer.load(appBindings);
+  const app = appContainer.get<App>(TYPES.Application);
+  await app.start(port);
+  return { appContainer, app, express: app.app };
 }
 
 export const boot = bootstrap();

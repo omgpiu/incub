@@ -2,7 +2,10 @@ import { VideosCreateDto, VideosUpdateDto } from './dto';
 import { VideosDB } from './db';
 import { IVideosService } from './videos.service.interface';
 import { IVideo } from './video.interface';
+import { injectable } from 'inversify';
+import 'reflect-metadata';
 
+@injectable()
 export class VideosService implements IVideosService {
   async createVideo(dto: VideosCreateDto): Promise<IVideo | null> {
     return await VideosDB.create({

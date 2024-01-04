@@ -9,10 +9,10 @@ describe('Videos', () => {
   let appExpress: Express;
 
   beforeAll(async () => {
-    const { appInstance, app } = await bootstrap(6000);
+    const { app, express } = await bootstrap(6000);
 
-    instance = appInstance;
-    appExpress = app;
+    instance = app;
+    appExpress = express;
 
     await request(appExpress).delete('/testing/all-data').expect(204);
   });

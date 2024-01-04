@@ -4,13 +4,20 @@ import { ValidationChain } from 'express-validator';
 import { baseValidation, putValidation } from './validation';
 import { IVideosService } from './videos.service.interface';
 import { VideosCreateDto, VideosUpdateDto } from './dto';
+import 'reflect-metadata';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../common/types/types';
 
+@injectable()
 export class VideosController extends BaseController {
   private readonly postValidation: ValidationChain[];
   private readonly putValidation: ValidationChain[];
   private readonly videosService: IVideosService;
-  constructor(logger: ILogger, videosService: IVideosService) {
-    super(logger);
+  constructor(
+    @inject(TYPES.ILogger) loggerService: ILogger,
+    @inject(TYPES.VideosService) videosService: IVideosService,
+  ) {
+    super(loggerService);
     this.videosService = videosService;
     this.postValidation = baseValidation;
     this.putValidation = [...baseValidation, ...putValidation];
