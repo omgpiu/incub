@@ -11,7 +11,9 @@ export class AuthMiddlewareService implements IMiddleware {
   execute(req: Request, res: Response, next: NextFunction): void {
     const auth = req.headers['authorization'];
     if (!auth) {
-      res.status(401).json({ message: 'Unauthorized' });
+      res
+        .status(401)
+        .json({ message: `Unauthorized with headers ${req.headers}` });
       return;
     }
 
