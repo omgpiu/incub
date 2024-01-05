@@ -26,6 +26,8 @@ export const baseValidation = [
     .isString()
     .withMessage('WebsiteUrl must be a string')
     .bail()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('WebsiteUrl must be less 100 characters long')
     .matches(
       /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/,
     )
