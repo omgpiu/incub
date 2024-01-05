@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:3000
+
+### Get Blogs
+GET {{baseUrl}}/posts
+Accept: application/json
+
+### Create Blog
+
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "title": "string",
+  "shortDescription": "string",
+  "content": "string",
+  "blogId": "string"
+}
+
+### Get Blog by id
+GET {{baseUrl}}/posts/0
+Accept: application/json
+
+### Update Blog by id
+PUT {{baseUrl}}/posts/0
+Content-Type: application/json
+
+{
+  "title": "string",
+  "shortDescription": "string",
+  "content": "string",
+  "blogId": "string"
+}
+
+
+### Delete Blog by id
+DELETE {{baseUrl}}/posts/0
+Content-Type: application/json

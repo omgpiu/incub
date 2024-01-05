@@ -15,7 +15,9 @@ import { IExceptionFilter, ILogger, TYPES } from './common';
 import { UtilsController } from './utils';
 import { VideosController } from './videos';
 import { inject, injectable } from 'inversify';
-
+import { BlogsController } from './blogs';
+import { PostsController } from './posts';
+import dotenv from 'dotenv';
 @injectable()
 export default class App {
   app: Express;
@@ -27,6 +29,8 @@ export default class App {
     @inject(TYPES.VideosController) private videosController: VideosController,
     @inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
     @inject(TYPES.UtilsController) private utilsController: UtilsController,
+    @inject(TYPES.BlogsController) private blogsController: BlogsController,
+    @inject(TYPES.PostsController) private postsController: PostsController,
   ) {
     this.app = express();
     this.port = this.normalizePort(process.env.PORT || 3000);
@@ -45,6 +49,8 @@ export default class App {
   private useRoutes() {
     this.app.use('/', this.utilsController.router);
     this.app.use('/videos', this.videosController.router);
+    this.app.use('/blogs', this.blogsController.router);
+    this.app.use('/posts', this.postsController.router);
   }
 
   private useExceptionFilters() {
@@ -75,9 +81,9 @@ export default class App {
   }
 
   public async start(port: number = this.port) {
+    dotenv.config();
     this.app.set('views', path.join(__dirname, '../views'));
     this.app.set('view engine', 'pug');
-
     this.app.use(logger('dev'));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));

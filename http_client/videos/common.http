@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:3000
+
+### Hello world
+GET {{baseUrl}}/
+Accept: application/json
+### Delete ALL memory data
+DELETE {{baseUrl}}/testing/all-data

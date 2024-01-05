@@ -9,12 +9,13 @@ import {
   RequestWithQuery,
   TYPES,
   ValidateMiddleware,
+  BasePramPayload,
+  RequestWithBodyParams,
 } from '../../common';
 import { baseValidation, putValidation } from '../validation';
 import { IVideosService } from '../service';
 import { VideoCreateDto, VideoUpdateDto } from '../dto';
 import { IVideosController } from './videos.controller.interface';
-import { BasePramPayload, RequestWithBodyParams } from '../../common/types';
 @injectable()
 export class VideosController
   extends BaseController
@@ -22,14 +23,12 @@ export class VideosController
 {
   private readonly postValidation: ValidationChain[];
   private readonly putValidation: ValidationChain[];
-  private readonly videosService: IVideosService;
 
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
-    @inject(TYPES.VideosService) videosService: IVideosService,
+    @inject(TYPES.VideosService) private videosService: IVideosService,
   ) {
     super(loggerService);
-    this.videosService = videosService;
     this.postValidation = baseValidation;
     this.putValidation = [...baseValidation, ...putValidation];
 
