@@ -16,6 +16,7 @@ import {
 import { IUtilsController, UtilsController } from './utils';
 import { Container, ContainerModule, interfaces } from 'inversify';
 import { Express } from 'express';
+import { BlogsController, BlogsService } from './blogs';
 
 export interface IBootstrapReturn {
   appContainer: Container;
@@ -27,6 +28,8 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
   bind<ILogger>(TYPES.ILogger).to(LoggerService);
   bind<IVideosService>(TYPES.VideosService).to(VideosService);
   bind<IVideosController>(TYPES.VideosController).to(VideosController);
+  bind<BlogsController>(TYPES.BlogsController).to(BlogsController);
+  bind<BlogsService>(TYPES.BlogsService).to(BlogsService);
   bind<IUtilsController>(TYPES.UtilsController).to(UtilsController);
   bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
   bind<App>(TYPES.Application).to(App);

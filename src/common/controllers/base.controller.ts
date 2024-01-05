@@ -46,7 +46,7 @@ export abstract class BaseController {
     callback: (id: string) => Promise<T | null>,
     options: {
       code?: number;
-      entity?: 'Video';
+      entity?: 'Video' | 'Blog';
     },
   ): Promise<void> {
     const id = req.params.id;

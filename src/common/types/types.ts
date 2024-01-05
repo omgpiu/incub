@@ -5,4 +5,6 @@ export const TYPES = {
   VideosController: Symbol.for('VideosController'),
   VideosService: Symbol.for('VideosService'),
   UtilsController: Symbol.for('UtilsController'),
+  BlogsController: Symbol.for('BlogsController'),
+  BlogsService: Symbol.for('BlogsService'),
 };
