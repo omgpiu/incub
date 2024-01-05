@@ -17,7 +17,7 @@ import { VideosController } from './videos';
 import { inject, injectable } from 'inversify';
 import { BlogsController } from './blogs';
 import { PostsController } from './posts';
-
+import dotenv from 'dotenv';
 @injectable()
 export default class App {
   app: Express;
@@ -81,9 +81,9 @@ export default class App {
   }
 
   public async start(port: number = this.port) {
+    dotenv.config();
     this.app.set('views', path.join(__dirname, '../views'));
     this.app.set('view engine', 'pug');
-
     this.app.use(logger('dev'));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));

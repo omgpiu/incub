@@ -3,16 +3,18 @@ import { ValidationChain } from 'express-validator';
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import {
+  AuthMiddlewareService,
   BaseController,
   ILogger,
   RequestWithBody,
   RequestWithQuery,
   TYPES,
   ValidateMiddleware,
+  BasePramPayload,
+  RequestWithBodyParams,
 } from '../../common';
 import { baseValidation } from '../validation';
 import { type BlogDto } from '../dto';
-import { BasePramPayload, RequestWithBodyParams } from '../../common/types';
 import { IBlogsService } from '../service';
 import { IBlogsController } from './blogs.controller.interface';
 @injectable()
@@ -21,14 +23,14 @@ export class BlogsController
   implements IBlogsController
 {
   private readonly validation: ValidationChain[];
-  private readonly blogsService: IBlogsService;
 
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
-    @inject(TYPES.BlogsService) blogsService: IBlogsService,
+    @inject(TYPES.BlogsService) private blogsService: IBlogsService,
+    @inject(TYPES.AuthMiddlewareService)
+    private authService: AuthMiddlewareService,
   ) {
     super(loggerService);
-    this.blogsService = blogsService;
     this.validation = baseValidation;
 
     this.bindRoutes([
@@ -37,16 +39,27 @@ export class BlogsController
         path: '/',
         func: this.create,
         method: 'post',
-        middlewares: [new ValidateMiddleware(this.validation)],
+        middlewares: [
+          this.authService,
+          new ValidateMiddleware(this.validation),
+        ],
       },
       { path: '/:id', func: this.getById, method: 'get' },
       {
         path: '/:id',
         func: this.update,
         method: 'put',
-        middlewares: [new ValidateMiddleware(this.validation)],
+        middlewares: [
+          this.authService,
+          new ValidateMiddleware(this.validation),
+        ],
       },
-      { path: '/:id', func: this.delete, method: 'delete' },
+      {
+        path: '/:id',
+        func: this.delete,
+        method: 'delete',
+        middlewares: [this.authService],
+      },
     ]);
   }
 

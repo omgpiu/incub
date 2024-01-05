@@ -3,15 +3,17 @@ import { ValidationChain } from 'express-validator';
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import {
+  AuthMiddlewareService,
   BaseController,
   ILogger,
   RequestWithBody,
   RequestWithQuery,
   TYPES,
   ValidateMiddleware,
+  BasePramPayload,
+  RequestWithBodyParams,
 } from '../../common';
 import { baseValidation } from '../validation';
-import { BasePramPayload, RequestWithBodyParams } from '../../common/types';
 import { IPostsService } from '../service';
 import { IPostsController } from './posts.controller.interface';
 import { PostDto } from '../dto';
@@ -22,11 +24,12 @@ export class PostsController
   implements IPostsController
 {
   private readonly postValidation: ValidationChain[];
-  private readonly postsService: IPostsService;
 
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
-    @inject(TYPES.PostsService) postsService: IPostsService,
+    @inject(TYPES.PostsService) private postsService: IPostsService,
+    @inject(TYPES.AuthMiddlewareService)
+    private authService: AuthMiddlewareService,
   ) {
     super(loggerService);
     this.postsService = postsService;
@@ -38,16 +41,27 @@ export class PostsController
         path: '/',
         func: this.create,
         method: 'post',
-        middlewares: [new ValidateMiddleware(this.postValidation)],
+        middlewares: [
+          this.authService,
+          new ValidateMiddleware(this.postValidation),
+        ],
       },
       { path: '/:id', func: this.getById, method: 'get' },
       {
         path: '/:id',
         func: this.update,
         method: 'put',
-        middlewares: [new ValidateMiddleware(this.postValidation)],
+        middlewares: [
+          this.authService,
+          new ValidateMiddleware(this.postValidation),
+        ],
       },
-      { path: '/:id', func: this.delete, method: 'delete' },
+      {
+        path: '/:id',
+        func: this.delete,
+        method: 'delete',
+        middlewares: [this.authService],
+      },
     ]);
   }
 

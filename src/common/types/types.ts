@@ -9,4 +9,5 @@ export const TYPES = {
   BlogsService: Symbol.for('BlogsService'),
   PostsService: Symbol.for('PostsService'),
   PostsController: Symbol.for('PostsController'),
+  AuthMiddlewareService: Symbol.for('AuthMiddlewareService'),
 };

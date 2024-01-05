@@ -1,5 +1,6 @@
 import App from './app';
 import {
+  AuthMiddlewareService,
   ExceptionFilter,
   IExceptionFilter,
   ILogger,
@@ -18,6 +19,7 @@ import { Container, ContainerModule, interfaces } from 'inversify';
 import { Express } from 'express';
 import { BlogsController, BlogsService } from './blogs';
 import { PostsController, PostsService } from './posts';
+import { IMiddleware } from './common/interfaces';
 
 export interface IBootstrapReturn {
   appContainer: Container;
@@ -35,6 +37,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
   bind<PostsService>(TYPES.PostsService).to(PostsService);
   bind<IUtilsController>(TYPES.UtilsController).to(UtilsController);
   bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
+  bind<IMiddleware>(TYPES.AuthMiddlewareService).to(AuthMiddlewareService);
   bind<App>(TYPES.Application).to(App);
 });
 
