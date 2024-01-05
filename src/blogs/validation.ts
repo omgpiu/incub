@@ -3,6 +3,7 @@ import { check } from 'express-validator';
 export const baseValidation = [
   check('name')
     .notEmpty()
+    .trim()
     .withMessage('Name is required')
     .bail()
     .isString()
@@ -12,6 +13,7 @@ export const baseValidation = [
     .withMessage('Name must be between 1 and 15 characters long'),
   check('description')
     .notEmpty()
+    .trim()
     .withMessage('Description field is required')
     .bail()
     .isString()
@@ -26,6 +28,8 @@ export const baseValidation = [
     .isString()
     .withMessage('WebsiteUrl must be a string')
     .bail()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('WebsiteUrl must be less 100 characters long')
     .matches(
       /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/,
     )
