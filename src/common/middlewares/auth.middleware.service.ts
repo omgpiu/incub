@@ -25,10 +25,7 @@ export class AuthMiddlewareService implements IMiddleware {
     const decoded = Buffer.from(token, 'base64').toString();
 
     const [login, password] = decoded.split(':');
-    console.log(process.env, 'auth');
-    console.log(process.env.BASIC_LOGIN, 'auth2');
-    console.log(login);
-    console.log(password);
+
     if (
       login !== process.env.BASIC_LOGIN ||
       password !== process.env.BASIC_PASSWORD
