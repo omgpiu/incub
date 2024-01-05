@@ -16,6 +16,7 @@ import { UtilsController } from './utils';
 import { VideosController } from './videos';
 import { inject, injectable } from 'inversify';
 import { BlogsController } from './blogs';
+import { PostsController } from './posts';
 
 @injectable()
 export default class App {
@@ -29,6 +30,7 @@ export default class App {
     @inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
     @inject(TYPES.UtilsController) private utilsController: UtilsController,
     @inject(TYPES.BlogsController) private blogsController: BlogsController,
+    @inject(TYPES.PostsController) private postsController: PostsController,
   ) {
     this.app = express();
     this.port = this.normalizePort(process.env.PORT || 3000);
@@ -48,6 +50,7 @@ export default class App {
     this.app.use('/', this.utilsController.router);
     this.app.use('/videos', this.videosController.router);
     this.app.use('/blogs', this.blogsController.router);
+    this.app.use('/posts', this.postsController.router);
   }
 
   private useExceptionFilters() {

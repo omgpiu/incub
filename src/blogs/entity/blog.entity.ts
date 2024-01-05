@@ -1,6 +1,6 @@
 import { IBlog } from './blog.interface';
 
-export class Blog implements IBlog {
+export class Post implements IBlog {
   id: string;
   name: string;
   description: string;

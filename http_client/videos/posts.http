@@ -10,9 +10,10 @@ POST {{baseUrl}}/posts
 Content-Type: application/json
 
 {
-  "name": "string",
-  "description": "string",
-  "websiteUrl": "https://google.com"
+  "title": "string",
+  "shortDescription": "string",
+  "content": "string",
+  "blogId": "string"
 }
 
 ### Get Blog by id
@@ -24,10 +25,12 @@ PUT {{baseUrl}}/posts/0
 Content-Type: application/json
 
 {
-  "name": "string",
-  "description": "string",
-  "websiteUrl": "https://google.com"
+  "title": "string",
+  "shortDescription": "string",
+  "content": "string",
+  "blogId": "string"
 }
+
 
 ### Delete Blog by id
 DELETE {{baseUrl}}/posts/0

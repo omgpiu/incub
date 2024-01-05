@@ -1,2 +1,2 @@
 export { IBlog } from './blog.interface';
-export { Blog } from './blog.entity';
+export { Post } from './blog.entity';

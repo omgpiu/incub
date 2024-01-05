@@ -1,14 +1,14 @@
 import { faker } from '@faker-js/faker';
-import { Blog, type IBlog } from '../entity';
+import { Post, type IBlog } from '../entity';
 
 export class BlogsDb {
   static dbBlogs = Array.from(
     { length: 10 },
     (_, id) =>
-      new Blog({
+      new Post({
         id: id < 3 ? String(id) : faker.number.int().toString(),
         name: faker.lorem.sentence(),
-        description: faker.lorem.words({ min: 5, max: 50 }),
+        description: faker.lorem.words({ min: 5, max: 500 }),
         websiteUrl: faker.internet.url(),
       }),
   );
@@ -22,7 +22,7 @@ export class BlogsDb {
   }
 
   static async create(data: Omit<IBlog, 'id'>) {
-    const newBlog = new Blog({
+    const newBlog = new Post({
       id: faker.number.int().toString(),
       ...data,
     });
