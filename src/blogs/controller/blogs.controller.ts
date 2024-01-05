@@ -51,18 +51,18 @@ export class BlogsController
   }
 
   async create(req: RequestWithBody<BlogDto>, res: Response) {
-    const video = await this.blogsService.create(req.body);
+    const blog = await this.blogsService.create(req.body);
 
-    if (!video) {
+    if (!blog) {
       res.status(400).json({ errorMessage: 'Bad request' });
     } else {
-      res.status(201).json(video);
+      res.status(201).json(blog);
     }
   }
 
   async getAll(req: Request, res: Response) {
-    const videos = await this.blogsService.getAll();
-    res.status(200).json(videos);
+    const blogs = await this.blogsService.getAll();
+    res.status(200).json(blogs);
   }
 
   async getById(req: RequestWithQuery<{ id?: string }>, res: Response) {

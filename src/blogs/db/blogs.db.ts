@@ -18,7 +18,7 @@ export class BlogsDb {
   }
 
   static async getById(id: string) {
-    return this.dbBlogs.find((video) => video.id === id) ?? null;
+    return this.dbBlogs.find((blog) => blog.id === id) ?? null;
   }
 
   static async create(data: Omit<IBlog, 'id'>) {
