@@ -45,7 +45,7 @@ export class PostsDb {
     }
     const payload = {
       ...updateData,
-      blogName: faker.lorem.sentence({ min: 1, max: 5 }),
+      blogName: post.blogName,
     };
     post.update(payload);
     return post;
