@@ -3,6 +3,7 @@ import { check } from 'express-validator';
 export const baseValidation = [
   check('name')
     .notEmpty()
+    .trim()
     .withMessage('Name is required')
     .bail()
     .isString()
@@ -12,6 +13,7 @@ export const baseValidation = [
     .withMessage('Name must be between 1 and 15 characters long'),
   check('description')
     .notEmpty()
+    .trim()
     .withMessage('Description field is required')
     .bail()
     .isString()
