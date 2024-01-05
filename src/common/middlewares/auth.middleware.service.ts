@@ -13,14 +13,16 @@ export class AuthMiddlewareService implements IMiddleware {
     if (!auth) {
       res
         .status(401)
-        .json({ message: `Unauthorized with headers ${req.headers}` });
+        .json({ message: `Unauthorized with 1 headers ${req.headers}` });
       return;
     }
 
     const [basic, token] = auth.split(' ');
 
     if (basic !== 'Basic') {
-      res.status(401).json({ message: 'Unauthorized' });
+      res
+        .status(401)
+        .json({ message: `Unauthorized with 2 headers ${req.headers}` });
       return;
     }
 
@@ -32,7 +34,9 @@ export class AuthMiddlewareService implements IMiddleware {
       login !== process.env.BASIC_LOGIN ||
       password !== process.env.BASIC_PASSWORD
     ) {
-      res.status(401).json({ message: 'Unauthorized' });
+      res
+        .status(401)
+        .json({ message: `Unauthorized with 3 headers ${req.headers}` });
       return;
     }
     next();
