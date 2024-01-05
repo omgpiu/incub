@@ -4,6 +4,7 @@ import { VideosDB } from '../videos/db';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IUtilsController } from './utils.controller.inferface';
+import { BlogsDb } from '../blogs/db';
 
 @injectable()
 export class UtilsController
@@ -25,6 +26,7 @@ export class UtilsController
 
   async cleanDBs(req: Request, res: Response) {
     VideosDB.deleteAll();
+    BlogsDb.deleteAll();
     res.status(204).send('All data is deleted').end();
   }
 
