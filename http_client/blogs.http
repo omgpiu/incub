@@ -6,7 +6,7 @@ Accept: application/json
 
 ### Create Blog
 
-POST {{baseUrl}}/posts
+POST {{baseUrl}}/blogs
 Content-Type: application/json
 authorization: Basic YWRtaW46cXdlcnR5
 
@@ -17,11 +17,11 @@ authorization: Basic YWRtaW46cXdlcnR5
 }
 
 ### Get Blog by id
-GET {{baseUrl}}/posts/0
+GET {{baseUrl}}/blogs/0
 Accept: application/json
 
 ### Update Blog by id
-PUT {{baseUrl}}/posts/0
+PUT {{baseUrl}}/blogs/0
 Content-Type: application/json
 
 {
@@ -31,5 +31,5 @@ Content-Type: application/json
 }
 
 ### Delete Blog by id
-DELETE {{baseUrl}}/posts/0
+DELETE {{baseUrl}}/blogs/0
 Content-Type: application/json

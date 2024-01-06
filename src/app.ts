@@ -18,6 +18,8 @@ import { inject, injectable } from 'inversify';
 import { BlogsController } from './blogs';
 import { PostsController } from './posts';
 import dotenv from 'dotenv';
+import { Routes } from './routes';
+
 @injectable()
 export default class App {
   app: Express;
@@ -47,10 +49,10 @@ export default class App {
   }
 
   private useRoutes() {
-    this.app.use('/', this.utilsController.router);
-    this.app.use('/videos', this.videosController.router);
-    this.app.use('/blogs', this.blogsController.router);
-    this.app.use('/posts', this.postsController.router);
+    this.app.use(Routes.ROOT, this.utilsController.router);
+    this.app.use(Routes.VIDEOS, this.videosController.router);
+    this.app.use(Routes.BLOGS, this.blogsController.router);
+    this.app.use(Routes.POSTS, this.postsController.router);
   }
 
   private useExceptionFilters() {
