@@ -33,7 +33,7 @@ describe('Blogs', () => {
     await request(appExpress).get(Routes.BLOGS).expect([]);
   });
 
-  it('GET video by id with error', async () => {
+  it('GET blog by id with error', async () => {
     await request(appExpress)
       .get(Routes.BLOGS + `/00000000000000`)
       .expect(404, { message: 'Blog not found' });
@@ -98,7 +98,7 @@ describe('Blogs', () => {
     ).expect(204);
   });
 
-  it('PUT not update video by id with error', async () => {
+  it('PUT not update blog by id with error', async () => {
     const response = await makeAuthRequest(
       appExpress,
       'put',
@@ -125,7 +125,7 @@ describe('Blogs', () => {
     );
   });
 
-  it('DELETE delete video by id success', async () => {
+  it('DELETE delete blog by id success', async () => {
     const res = await makeAuthRequest(
       appExpress,
       'post',
@@ -139,7 +139,7 @@ describe('Blogs', () => {
     ).expect(204);
   });
 
-  it('DELETE not delete video by id with error', async () => {
+  it('DELETE not delete blog by id with error', async () => {
     await makeAuthRequest(
       appExpress,
       'delete',
