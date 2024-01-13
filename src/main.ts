@@ -5,6 +5,7 @@ import {
   IExceptionFilter,
   ILogger,
   LoggerService,
+  MongoDBClient,
   TYPES,
 } from './common';
 
@@ -21,7 +22,6 @@ import { Express } from 'express';
 import { BlogsController, BlogsService } from './blogs';
 import { PostsController, PostsService } from './posts';
 import { IMiddleware } from './common/interfaces';
-import MongoDBClient from './db';
 
 export interface IBootstrapReturn {
   appContainer: Container;

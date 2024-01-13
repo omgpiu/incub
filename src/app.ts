@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { Server } from 'http';
 import 'reflect-metadata';
-import { IExceptionFilter, ILogger, TYPES } from './common';
+import { IExceptionFilter, ILogger, MongoDBClient, TYPES } from './common';
 import { UtilsController } from './utils';
 import { VideosController } from './videos';
 import { inject, injectable } from 'inversify';
@@ -19,7 +19,6 @@ import { BlogsController } from './blogs';
 import { PostsController } from './posts';
 import dotenv from 'dotenv';
 import { Routes } from './routes';
-import MongoDBClient from './db';
 
 dotenv.config();
 @injectable()

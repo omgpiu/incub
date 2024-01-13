@@ -1,26 +1,22 @@
 import { IVideo, Video } from '../entity';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { TYPES } from '../../common';
-import MongoDBClient from '../../db';
-import { Collection } from 'mongodb';
+import { MongoDBClient, TYPES, BaseRepository } from '../../common';
 
 @injectable()
-export class VideosRepository {
-  repository: Collection<IVideo>;
-
+export class VideosRepository extends BaseRepository<IVideo & { _id: string }> {
   constructor(
     @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,
   ) {
-    this.repository = mongoDBClient.getCollection('videos');
+    super(mongoDBClient, 'videos');
   }
 
   async getAll() {
-    return await this.repository.find().toArray();
+    return this.transformArray(await this.repository.find().toArray());
   }
 
   async getById(id: string) {
-    return await this.repository.findOne({ id: Number(id) });
+    return this.transformDocument(await this.repository.findOne({ id }));
   }
 
   async create(
@@ -39,28 +35,32 @@ export class VideosRepository {
     const insertedId = await this.repository
       .insertOne(newVideo)
       .then((result) => result.insertedId);
-    return await this.repository.findOne({ _id: insertedId });
+    console.log(insertedId, 'insert id');
+    const video = await this.repository.findOne({ _id: insertedId });
+    console.log(video, 'video');
+    return this.transformDocument(video);
   }
 
   async update(
-    _id: string,
-    updateData: Omit<IVideo, '_id' | 'createdAt'>,
+    id: string,
+    updateData: Omit<IVideo, 'id' | 'createdAt'>,
   ): Promise<Video | null> {
-    const video = await this.repository.findOne({ _id });
+    const res = await this.repository.findOne({ id });
+    const video = this.transformDocument(res);
 
     if (!video) {
       return null;
     }
 
-    await this.repository.updateOne({ _id }, updateData);
+    await this.repository.updateOne({ id }, updateData);
 
     return null;
   }
 
-  async delete(_id: string) {
+  async delete(id: string) {
     return await this.repository
       .deleteOne({
-        _id,
+        id,
       })
       .then((res) => res.deletedCount);
   }

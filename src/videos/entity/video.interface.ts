@@ -1,7 +1,7 @@
 import { ResolutionType } from '../repository';
 
 export interface IVideo {
-  _id: string;
+  id: string;
   title: string;
   author: string;
   canBeDownloaded: boolean;
