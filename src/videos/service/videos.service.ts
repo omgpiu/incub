@@ -1,21 +1,28 @@
 import { VideoCreateDto, VideoUpdateDto } from '../dto';
-import { VideosDB } from '../db';
+import { VideosRepository } from '../repository';
 import { IVideosService } from './videos.service.interface';
 import { IVideo } from '../entity';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+import { TYPES } from '../../common';
 
 @injectable()
 export class VideosService implements IVideosService {
+  constructor(
+    @inject(TYPES.VideosRepository)
+    private readonly videosRepository: VideosRepository,
+  ) {}
   async createVideo(dto: VideoCreateDto): Promise<IVideo | null> {
-    return await VideosDB.create({
+    const newVideo = await this.videosRepository.create({
       title: dto.title,
       author: dto.author,
       availableResolutions: dto.availableResolutions,
     });
+
+    return newVideo ?? null;
   }
   async updateVideo(id: string, dto: VideoUpdateDto): Promise<IVideo | null> {
-    return await VideosDB.update(id, {
+    return await this.videosRepository.update(id, {
       title: dto.title,
       author: dto.author,
       canBeDownloaded: dto.canBeDownloaded,
@@ -25,13 +32,14 @@ export class VideosService implements IVideosService {
     });
   }
   async getAll(): Promise<IVideo[]> {
-    return await VideosDB.getAll();
+    return await this.videosRepository.getAll();
   }
 
   async getById(id: string): Promise<IVideo | null> {
-    return await VideosDB.getById(id);
+    return await this.videosRepository.getById(id);
   }
   async deleteVideo(id: string): Promise<boolean | null> {
-    return await VideosDB.delete(id);
+    const deletedCount = await this.videosRepository.delete(id);
+    return deletedCount ? null : true;
   }
 }

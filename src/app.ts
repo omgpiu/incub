@@ -19,7 +19,9 @@ import { BlogsController } from './blogs';
 import { PostsController } from './posts';
 import dotenv from 'dotenv';
 import { Routes } from './routes';
+import MongoDBClient from './db';
 
+dotenv.config();
 @injectable()
 export default class App {
   app: Express;
@@ -33,6 +35,7 @@ export default class App {
     @inject(TYPES.UtilsController) private utilsController: UtilsController,
     @inject(TYPES.BlogsController) private blogsController: BlogsController,
     @inject(TYPES.PostsController) private postsController: PostsController,
+    @inject(TYPES.MongoDBClient) private mongoDBClient: MongoDBClient,
   ) {
     this.app = express();
     this.port = this.normalizePort(process.env.PORT || 3000);
@@ -80,10 +83,10 @@ export default class App {
     if (this.server) {
       this.server.close();
     }
+    await this.mongoDBClient.disconnect();
   }
 
   public async start(port: number = this.port) {
-    dotenv.config();
     this.app.set('views', path.join(__dirname, '../views'));
     this.app.set('view engine', 'pug');
     this.app.use(logger('dev'));
@@ -100,5 +103,6 @@ export default class App {
     this.server = this.app.listen(port, () => {
       this.loggerService.log(`Server running at http://localhost:${port}/`);
     });
+    await this.mongoDBClient.connect();
   }
 }

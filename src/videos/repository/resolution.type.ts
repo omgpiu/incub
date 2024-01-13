@@ -1,3 +1,3 @@
-import { RESOLUTION } from './data.generator';
+import { RESOLUTION } from './constants';
 
 export type ResolutionType = (typeof RESOLUTION)[number];

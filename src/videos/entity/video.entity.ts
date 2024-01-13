@@ -1,7 +1,7 @@
 import { IVideo } from './video.interface';
 
 export class Video implements IVideo {
-  id: number;
+  _id: string;
   title: string;
   author: string;
   availableResolutions: string[];
@@ -10,8 +10,7 @@ export class Video implements IVideo {
   canBeDownloaded: boolean;
   minAgeRestriction: number | null;
 
-  constructor(videoData: IVideo) {
-    this.id = videoData.id;
+  constructor(videoData: Omit<IVideo, '_id'>) {
     this.title = videoData.title;
     this.author = videoData.author;
     this.availableResolutions = videoData.availableResolutions;
@@ -21,7 +20,7 @@ export class Video implements IVideo {
     this.minAgeRestriction = videoData.minAgeRestriction;
   }
 
-  update(updateData: Omit<IVideo, 'id' | 'createdAt'>) {
+  update(updateData: Omit<IVideo, 'createdAt'>) {
     Object.assign(this, updateData);
   }
 }

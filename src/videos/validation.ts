@@ -1,5 +1,5 @@
 import { check } from 'express-validator';
-import { RESOLUTION } from './db';
+import { RESOLUTION } from './repository';
 import { isValid, parseISO } from 'date-fns';
 
 export const baseValidation = [
