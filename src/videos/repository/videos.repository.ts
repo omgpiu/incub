@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { MongoDBClient, TYPES, BaseRepository } from '../../common';
 
 @injectable()
-export class VideosRepository extends BaseRepository<IVideo & { _id: string }> {
+export class VideosRepository extends BaseRepository<IVideo> {
   constructor(
     @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,
   ) {
@@ -35,9 +35,7 @@ export class VideosRepository extends BaseRepository<IVideo & { _id: string }> {
     const insertedId = await this.repository
       .insertOne(newVideo)
       .then((result) => result.insertedId);
-    console.log(insertedId, 'insert id');
     const video = await this.repository.findOne({ _id: insertedId });
-    console.log(video, 'video');
     return this.transformDocument(video);
   }
 

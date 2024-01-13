@@ -3,7 +3,7 @@ import { injectable, unmanaged } from 'inversify';
 import 'reflect-metadata';
 import { MongoDBClient } from '../db';
 @injectable()
-export abstract class BaseRepository<T extends { _id: string }> {
+export abstract class BaseRepository<T extends object> {
   protected repository: Collection<T>;
 
   constructor(@unmanaged() client: MongoDBClient, collectionName: string) {
