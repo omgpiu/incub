@@ -23,9 +23,9 @@ export class VideosRepository extends BaseRepository<IVideo> {
     return null;
   }
 
-  async create(videoData: VideoCreateDto) {
+  async create(dto: VideoCreateDto) {
     const newVideo = new Video({
-      ...videoData,
+      ...dto,
       createdAt: new Date().toISOString(),
       publicationDate: new Date(
         new Date().setDate(new Date().getDate() + 1),
@@ -34,24 +34,21 @@ export class VideosRepository extends BaseRepository<IVideo> {
       minAgeRestriction: null,
     });
 
-    const insertedId = await this.repository
-      .insertOne(newVideo)
-      .then((result) => result.insertedId);
+    const id = await this.repository
+      .insertOne({ ...newVideo })
+      .then((result) => result.insertedId.toString());
 
     return {
       ...newVideo,
-      id: insertedId.toString(),
+      id: id,
     };
   }
 
-  async update(
-    _id: ObjectId,
-    updateData: VideoUpdateDto,
-  ): Promise<Video | null> {
+  async update(_id: ObjectId, dto: VideoUpdateDto): Promise<Video | null> {
     const res = await this.repository.findOneAndUpdate(
       { _id },
       {
-        $set: updateData,
+        $set: dto,
       },
     );
     if (res) {
