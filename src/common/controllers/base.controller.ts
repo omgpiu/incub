@@ -52,7 +52,7 @@ export abstract class BaseController {
   ): Promise<void> {
     const id = req.params.id;
     const notFoundMessage = `${options.entity} not found`;
-    if (!id) {
+    if (!id || !ObjectId.isValid(id)) {
       res.status(404).json({ message: notFoundMessage });
       return;
     }
