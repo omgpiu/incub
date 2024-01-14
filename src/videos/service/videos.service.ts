@@ -5,6 +5,7 @@ import { IVideo } from '../entity';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { TYPES } from '../../common';
+import { ObjectId } from 'mongodb';
 
 @injectable()
 export class VideosService implements IVideosService {
@@ -21,7 +22,10 @@ export class VideosService implements IVideosService {
 
     return newVideo ?? null;
   }
-  async updateVideo(id: string, dto: VideoUpdateDto): Promise<IVideo | null> {
+  async updateVideo(id: ObjectId, dto: VideoUpdateDto): Promise<IVideo | null> {
+    if (!ObjectId.isValid(id)) {
+      return null;
+    }
     return await this.videosRepository.update(id, {
       title: dto.title,
       author: dto.author,
@@ -35,11 +39,11 @@ export class VideosService implements IVideosService {
     return await this.videosRepository.getAll();
   }
 
-  async getById(id: string): Promise<IVideo | null> {
+  async getById(id: ObjectId): Promise<IVideo | null> {
     return await this.videosRepository.getById(id);
   }
-  async deleteVideo(id: string): Promise<boolean | null> {
+  async deleteVideo(id: ObjectId): Promise<boolean> {
     const deletedCount = await this.videosRepository.delete(id);
-    return deletedCount ? null : true;
+    return Boolean(deletedCount);
   }
 }

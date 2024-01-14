@@ -4,6 +4,7 @@ import { IControllerRoute } from '../interfaces';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 import { BasePramPayload } from '../types';
+import { ObjectId } from 'mongodb';
 
 @injectable()
 export abstract class BaseController {
@@ -43,7 +44,7 @@ export abstract class BaseController {
   protected async handleWithId<T, P extends BasePramPayload, B, Q>(
     req: Request<P, object, B, Q>,
     res: Response,
-    callback: (id: string) => Promise<T | null>,
+    callback: (id: ObjectId) => Promise<T | null>,
     options: {
       code?: number;
       entity?: 'Video' | 'Blog' | 'Post';

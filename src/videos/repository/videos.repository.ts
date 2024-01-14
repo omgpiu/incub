@@ -2,6 +2,8 @@ import { IVideo, Video } from '../entity';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { MongoDBClient, TYPES, BaseRepository } from '../../common';
+import { ObjectId } from 'mongodb';
+import { VideoCreateDto, VideoUpdateDto } from '../dto';
 
 @injectable()
 export class VideosRepository extends BaseRepository<IVideo> {
@@ -15,15 +17,13 @@ export class VideosRepository extends BaseRepository<IVideo> {
     return this.transformArray(await this.repository.find().toArray());
   }
 
-  async getById(id: string) {
-    const res = await this.repository.findOne({ id });
-
-    return res ? this.transformDocument(res) : res;
+  async getById(_id: ObjectId) {
+    const res = await this.repository.findOne({ _id });
+    if (res) return this.transformDocument(res);
+    return null;
   }
 
-  async create(
-    videoData: Pick<IVideo, 'title' | 'author' | 'availableResolutions'>,
-  ) {
+  async create(videoData: VideoCreateDto) {
     const newVideo = new Video({
       ...videoData,
       createdAt: new Date().toISOString(),
@@ -45,25 +45,25 @@ export class VideosRepository extends BaseRepository<IVideo> {
   }
 
   async update(
-    id: string,
-    updateData: Omit<IVideo, 'id' | 'createdAt'>,
+    _id: ObjectId,
+    updateData: VideoUpdateDto,
   ): Promise<Video | null> {
     const res = await this.repository.findOneAndUpdate(
-      { id },
+      { _id },
       {
         $set: updateData,
       },
     );
-    if (!res) {
-      return null;
+    if (res) {
+      return this.transformDocument(res);
     }
-    return this.transformDocument(res);
+    return null;
   }
 
-  async delete(id: string) {
+  async delete(_id: ObjectId) {
     return await this.repository
       .deleteOne({
-        id,
+        _id,
       })
       .then((res) => res.deletedCount);
   }

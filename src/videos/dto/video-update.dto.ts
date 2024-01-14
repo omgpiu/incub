@@ -1,4 +1,4 @@
-import { ResolutionType } from '../db';
+import { ResolutionType } from '../repository';
 
 export class VideoUpdateDto {
   title: string;
