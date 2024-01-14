@@ -1,10 +1,11 @@
 import { BlogDto } from '../dto';
 import { IBlog } from '../entity';
+import { ObjectId } from 'mongodb';
 
 export interface IBlogsService {
   create: (dto: BlogDto) => Promise<IBlog | null>;
-  update: (id: string, dto: BlogDto) => Promise<IBlog | null>;
+  update: (id: ObjectId, dto: BlogDto) => Promise<IBlog | null>;
   getAll: () => Promise<IBlog[]>;
-  getById: (id: string) => Promise<IBlog | null>;
-  delete: (id: string) => Promise<boolean | null>;
+  getById: (id: ObjectId) => Promise<IBlog | null>;
+  delete: (id: ObjectId) => Promise<boolean | null>;
 }

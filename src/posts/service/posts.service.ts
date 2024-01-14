@@ -4,6 +4,7 @@ import { injectable } from 'inversify';
 import 'reflect-metadata';
 import { type IPost } from '../entity';
 import { IPostsService } from './posts.service.interface';
+import { ObjectId } from 'mongodb';
 
 @injectable()
 export class PostsService implements IPostsService {
@@ -16,8 +17,8 @@ export class PostsService implements IPostsService {
     });
   }
 
-  async update(id: string, dto: PostDto): Promise<IPost | null> {
-    return await PostsDb.update(id, {
+  async update(id: ObjectId, dto: PostDto): Promise<IPost | null> {
+    return await PostsDb.update(id.toString(), {
       title: dto.title,
       content: dto.content,
       shortDescription: dto.shortDescription,
@@ -29,11 +30,11 @@ export class PostsService implements IPostsService {
     return await PostsDb.getAll();
   }
 
-  async getById(id: string): Promise<IPost | null> {
-    return await PostsDb.getById(id);
+  async getById(id: ObjectId): Promise<IPost | null> {
+    return await PostsDb.getById(id.toString());
   }
 
-  async delete(id: string): Promise<boolean | null> {
-    return await PostsDb.delete(id);
+  async delete(id: ObjectId): Promise<boolean | null> {
+    return await PostsDb.delete(id.toString());
   }
 }

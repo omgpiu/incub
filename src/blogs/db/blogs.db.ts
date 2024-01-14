@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Post, type IBlog } from '../entity';
+import { ObjectId } from 'mongodb';
 
 export class BlogsDb {
   static dbBlogs = Array.from(
@@ -17,8 +18,8 @@ export class BlogsDb {
     return this.dbBlogs;
   }
 
-  static async getById(id: string) {
-    return this.dbBlogs.find((blog) => blog.id === id) ?? null;
+  static async getById(id: ObjectId) {
+    return this.dbBlogs.find((blog) => blog.id === id.toString()) ?? null;
   }
 
   static async create(data: Omit<IBlog, 'id'>) {
@@ -32,7 +33,7 @@ export class BlogsDb {
   }
 
   static async update(
-    id: string,
+    id: ObjectId,
     updateData: Omit<IBlog, 'id'>,
   ): Promise<IBlog | null> {
     const blog = await this.getById(id);
