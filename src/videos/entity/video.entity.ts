@@ -19,8 +19,4 @@ export class Video implements IVideo {
     this.canBeDownloaded = videoData.canBeDownloaded;
     this.minAgeRestriction = videoData.minAgeRestriction;
   }
-
-  update(updateData: Omit<IVideo, 'createdAt'>) {
-    Object.assign(this, updateData);
-  }
 }

@@ -1,4 +1,4 @@
-import { Collection } from 'mongodb';
+import { Collection, WithId } from 'mongodb';
 import { injectable, unmanaged } from 'inversify';
 import 'reflect-metadata';
 import { MongoDBClient } from '../db';
@@ -10,15 +10,12 @@ export abstract class BaseRepository<T extends object> {
     this.repository = client.getCollection(collectionName);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected transformDocument(doc: any): T {
+  protected transformDocument(doc: WithId<T>): T {
     if (!doc) return doc;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     const { _id, ...rest } = doc;
     return { id: _id, ...rest } as unknown as T;
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected transformArray(docs: any[]): T[] {
+  protected transformArray(docs: WithId<T>[]): T[] {
     return docs.map((doc) => this.transformDocument(doc));
   }
 }

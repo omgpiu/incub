@@ -16,7 +16,9 @@ export class VideosRepository extends BaseRepository<IVideo> {
   }
 
   async getById(id: string) {
-    return this.transformDocument(await this.repository.findOne({ id }));
+    const res = await this.repository.findOne({ id });
+
+    return res ? this.transformDocument(res) : res;
   }
 
   async create(
@@ -35,24 +37,27 @@ export class VideosRepository extends BaseRepository<IVideo> {
     const insertedId = await this.repository
       .insertOne(newVideo)
       .then((result) => result.insertedId);
-    const video = await this.repository.findOne({ _id: insertedId });
-    return this.transformDocument(video);
+
+    return {
+      ...newVideo,
+      id: insertedId.toString(),
+    };
   }
 
   async update(
     id: string,
     updateData: Omit<IVideo, 'id' | 'createdAt'>,
   ): Promise<Video | null> {
-    const res = await this.repository.findOne({ id });
-    const video = this.transformDocument(res);
-
-    if (!video) {
+    const res = await this.repository.findOneAndUpdate(
+      { id },
+      {
+        $set: updateData,
+      },
+    );
+    if (!res) {
       return null;
     }
-
-    await this.repository.updateOne({ id }, updateData);
-
-    return null;
+    return this.transformDocument(res);
   }
 
   async delete(id: string) {
