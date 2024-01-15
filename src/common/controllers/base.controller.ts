@@ -62,7 +62,7 @@ export abstract class BaseController {
       if (result) {
         res.status(options.code ?? 200).json(result);
       } else if (options.code === 204 && result) {
-        res.status(204).end();
+        res.sendStatus(204);
       } else {
         res.status(404).json({ message: notFoundMessage });
       }
