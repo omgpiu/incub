@@ -3,9 +3,9 @@ import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IUtilsController } from './utils.controller.inferface';
-import { BlogsDb } from '../blogs/db';
 import { PostsDb } from '../posts/db';
 import { VideosRepository } from '../videos';
+import { BlogsRepository } from '../blogs';
 
 @injectable()
 export class UtilsController
@@ -15,6 +15,7 @@ export class UtilsController
   constructor(
     @inject(TYPES.ILogger) private loggerService: ILogger,
     @inject(TYPES.VideosRepository) private videosRepository: VideosRepository,
+    @inject(TYPES.BlogsRepository) private blogsRepository: BlogsRepository,
   ) {
     super(loggerService);
 
@@ -30,7 +31,7 @@ export class UtilsController
 
   async cleanDBs(req: Request, res: Response) {
     await this.videosRepository.deleteAll();
-    BlogsDb.deleteAll();
+    await this.blogsRepository.deleteAll();
     PostsDb.deleteAll();
     res.status(204).send('All data is deleted').end();
   }
