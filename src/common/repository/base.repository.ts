@@ -1,4 +1,4 @@
-import { Collection, WithId } from 'mongodb';
+import { Collection, WithId, WithoutId } from 'mongodb';
 import { injectable, unmanaged } from 'inversify';
 import 'reflect-metadata';
 import { MongoDBClient } from '../db';
@@ -10,12 +10,12 @@ export abstract class BaseRepository<T extends object> {
     this.repository = client.getCollection(collectionName);
   }
 
-  protected transformDocument(doc: WithId<T>): T {
+  protected transformDocument(doc: WithId<T>): WithoutId<T> {
     if (!doc) return doc;
     const { _id, ...rest } = doc;
-    return { id: _id, ...rest } as unknown as T;
+    return { id: _id.toString(), ...rest } as WithoutId<T>;
   }
-  protected transformArray(docs: WithId<T>[]): T[] {
+  protected transformArray(docs: WithId<T>[]): WithoutId<T>[] {
     return docs.map((doc) => this.transformDocument(doc));
   }
 }

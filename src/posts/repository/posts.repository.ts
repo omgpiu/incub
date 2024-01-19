@@ -1,50 +1,43 @@
-import { IVideo, Video } from '../entity';
+import { faker } from '@faker-js/faker';
+import { Post, IPost } from '../entity';
+import { BaseRepository, MongoDBClient, TYPES } from '../../common';
 import { inject, injectable } from 'inversify';
-import 'reflect-metadata';
-import { MongoDBClient, TYPES, BaseRepository } from '../../common';
 import { ObjectId } from 'mongodb';
-import { VideoCreateDto, VideoUpdateDto } from '../dto';
-
+import { PostDto } from '../dto';
+import 'reflect-metadata';
 @injectable()
-export class VideosRepository extends BaseRepository<IVideo> {
+export class PostsRepository extends BaseRepository<IPost> {
   constructor(
     @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,
   ) {
-    super(mongoDBClient, 'videos');
+    super(mongoDBClient, 'posts');
   }
 
   async getAll() {
     return this.transformArray(await this.repository.find().toArray());
   }
-
   async getById(_id: ObjectId) {
     const res = await this.repository.findOne({ _id });
     if (res) return this.transformDocument(res);
     return null;
   }
 
-  async create(dto: VideoCreateDto) {
-    const newVideo = new Video({
+  async create(dto: PostDto) {
+    const newPost = new Post({
+      blogName: faker.lorem.sentence({ min: 1, max: 5 }),
       ...dto,
-      createdAt: new Date().toISOString(),
-      publicationDate: new Date(
-        new Date().setDate(new Date().getDate() + 1),
-      ).toISOString(),
-      canBeDownloaded: false,
-      minAgeRestriction: null,
     });
-
     const id = await this.repository
-      .insertOne({ ...newVideo })
+      .insertOne({ ...newPost })
       .then((result) => result.insertedId.toString());
 
     return {
-      ...newVideo,
+      ...newPost,
       id,
     };
   }
 
-  async update(_id: ObjectId, dto: VideoUpdateDto): Promise<Video | null> {
+  async update(_id: ObjectId, dto: PostDto): Promise<IPost | null> {
     const res = await this.repository.findOneAndUpdate(
       { _id },
       {

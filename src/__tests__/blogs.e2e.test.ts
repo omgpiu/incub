@@ -4,7 +4,7 @@ import { Express } from 'express';
 import { bootstrap } from '../main';
 import { Routes } from '../routes';
 import { BlogDto } from '../blogs/dto';
-import { makeAuthRequest } from './helpers';
+import { requestWithAuth } from './helpers';
 
 describe('Blogs', () => {
   let instance: App;
@@ -40,7 +40,7 @@ describe('Blogs', () => {
   });
 
   it('GET blogs by id success', async () => {
-    const res = await makeAuthRequest(
+    const res = await requestWithAuth(
       appExpress,
       'post',
       Routes.BLOGS,
@@ -65,7 +65,7 @@ describe('Blogs', () => {
   });
 
   it('POST not created blog with error', async () => {
-    await makeAuthRequest(appExpress, 'post', Routes.BLOGS).expect(400, {
+    await requestWithAuth(appExpress, 'post', Routes.BLOGS).expect(400, {
       errorsMessages: [
         { message: 'WebsiteUrl is required', field: 'websiteUrl' },
         { message: 'Name is required', field: 'name' },
@@ -75,7 +75,7 @@ describe('Blogs', () => {
   });
 
   it('POST created blog success', async () => {
-    await makeAuthRequest(
+    await requestWithAuth(
       appExpress,
       'post',
       Routes.BLOGS,
@@ -84,13 +84,13 @@ describe('Blogs', () => {
   });
 
   it('PUT update blog by id success', async () => {
-    const res = await makeAuthRequest(
+    const res = await requestWithAuth(
       appExpress,
       'post',
       Routes.BLOGS,
       updateCreatePayload,
     );
-    await makeAuthRequest(
+    await requestWithAuth(
       appExpress,
       'put',
       Routes.BLOGS + `/${res.body.id}`,
@@ -99,7 +99,7 @@ describe('Blogs', () => {
   });
 
   it('PUT not update blog by id with error', async () => {
-    const response = await makeAuthRequest(
+    const response = await requestWithAuth(
       appExpress,
       'put',
       Routes.BLOGS + `/0000000000`,
@@ -126,13 +126,13 @@ describe('Blogs', () => {
   });
 
   it('DELETE delete blog by id success', async () => {
-    const res = await makeAuthRequest(
+    const res = await requestWithAuth(
       appExpress,
       'post',
       Routes.BLOGS,
       updateCreatePayload,
     );
-    await makeAuthRequest(
+    await requestWithAuth(
       appExpress,
       'delete',
       Routes.BLOGS + `/${res.body.id}`,
@@ -140,7 +140,7 @@ describe('Blogs', () => {
   });
 
   it('DELETE not delete blog by id with error', async () => {
-    await makeAuthRequest(
+    await requestWithAuth(
       appExpress,
       'delete',
       Routes.BLOGS + '/1001010101010',

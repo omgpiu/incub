@@ -3,8 +3,9 @@ import App from '../app';
 import { Express } from 'express';
 import { bootstrap } from '../main';
 import { Routes } from '../routes';
-import { makeAuthRequest } from './helpers';
+import { requestWithAuth } from './helpers';
 import { PostDto } from '../posts/dto';
+import { BlogDto } from '../blogs/dto';
 
 describe('Posts', () => {
   let instance: App;
@@ -15,6 +16,12 @@ describe('Posts', () => {
     content: 'string',
     shortDescription: 'string',
     blogId: 'string',
+  };
+
+  const blogDto: BlogDto = {
+    name: 'string',
+    description: 'string',
+    websiteUrl: 'https://google.com',
   };
 
   beforeAll(async () => {
@@ -41,15 +48,20 @@ describe('Posts', () => {
   });
 
   it('GET posts by id success', async () => {
-    const res = await makeAuthRequest(
+    const blogRes = await requestWithAuth(
       appExpress,
       'post',
-      Routes.POSTS,
-      updateCreatePayload,
-    );
+      Routes.BLOGS,
+      blogDto,
+    ).expect(201);
+
+    const postRes = await requestWithAuth(appExpress, 'post', Routes.POSTS, {
+      ...updateCreatePayload,
+      blogId: blogRes.body.id,
+    });
 
     await request(appExpress)
-      .get(Routes.POSTS + `/${res.body.id}`)
+      .get(Routes.POSTS + `/${postRes.body.id}`)
       .expect(200);
   });
 
@@ -66,7 +78,7 @@ describe('Posts', () => {
   });
 
   it('POST not created post with error', async () => {
-    await makeAuthRequest(appExpress, 'post', Routes.POSTS).expect(400, {
+    await requestWithAuth(appExpress, 'post', Routes.POSTS).expect(400, {
       errorsMessages: [
         { message: 'blogId field is required', field: 'blogId' },
         { message: 'Title is required', field: 'title' },
@@ -80,31 +92,38 @@ describe('Posts', () => {
   });
 
   it('POST created post success', async () => {
-    await makeAuthRequest(
+    const blogRes = await requestWithAuth(
       appExpress,
       'post',
-      Routes.POSTS,
-      updateCreatePayload,
+      Routes.BLOGS,
+      blogDto,
     ).expect(201);
+    await requestWithAuth(appExpress, 'post', Routes.POSTS, {
+      ...updateCreatePayload,
+      blogId: blogRes.body.id,
+    }).expect(201);
   });
 
   it('PUT update post by id success', async () => {
-    const res = await makeAuthRequest(
+    const blogRes = await requestWithAuth(
       appExpress,
       'post',
-      Routes.POSTS,
-      updateCreatePayload,
-    );
-    await makeAuthRequest(
-      appExpress,
-      'put',
-      Routes.POSTS + `/${res.body.id}`,
-      updateCreatePayload,
-    ).expect(204);
+      Routes.BLOGS,
+      blogDto,
+    ).expect(201);
+
+    const res = await requestWithAuth(appExpress, 'post', Routes.POSTS, {
+      ...updateCreatePayload,
+      blogId: blogRes.body.id,
+    });
+    await requestWithAuth(appExpress, 'put', Routes.POSTS + `/${res.body.id}`, {
+      ...updateCreatePayload,
+      blogId: blogRes.body.id,
+    }).expect(204);
   });
 
   it('PUT not update video by id with error', async () => {
-    await makeAuthRequest(
+    await requestWithAuth(
       appExpress,
       'put',
       Routes.POSTS + `/0000000000`,
@@ -121,22 +140,26 @@ describe('Posts', () => {
     });
   });
 
-  it('DELETE delete video by id success', async () => {
-    const res = await makeAuthRequest(
+  it('DELETE delete post by id success', async () => {
+    const blogRes = await requestWithAuth(
       appExpress,
       'post',
-      Routes.POSTS,
-      updateCreatePayload,
-    );
-    await makeAuthRequest(
+      Routes.BLOGS,
+      blogDto,
+    ).expect(201);
+    const res = await requestWithAuth(appExpress, 'post', Routes.POSTS, {
+      ...updateCreatePayload,
+      blogId: blogRes.body.id,
+    });
+    await requestWithAuth(
       appExpress,
       'delete',
       Routes.POSTS + `/${res.body.id}`,
     ).expect(204);
   });
 
-  it('DELETE not delete video by id with error', async () => {
-    await makeAuthRequest(
+  it('DELETE not delete post by id with error', async () => {
+    await requestWithAuth(
       appExpress,
       'delete',
       Routes.POSTS + '/1001010101010',

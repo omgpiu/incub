@@ -17,6 +17,7 @@ import { baseValidation } from '../validation';
 import { IPostsService } from '../service';
 import { IPostsController } from './posts.controller.interface';
 import { PostDto } from '../dto';
+import { IBlogsService } from '../../blogs';
 
 @injectable()
 export class PostsController
@@ -28,6 +29,7 @@ export class PostsController
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
     @inject(TYPES.PostsService) private postsService: IPostsService,
+    @inject(TYPES.BlogsService) private blogsService: IBlogsService,
     @inject(TYPES.AuthMiddlewareService)
     private authService: AuthMiddlewareService,
   ) {
@@ -66,12 +68,24 @@ export class PostsController
   }
 
   async create(req: RequestWithBody<PostDto>, res: Response) {
+    await this.handleWithId(
+      req,
+      res,
+      (blogId) => this.blogsService.getById(blogId),
+      {
+        code: 200,
+        entity: 'Blog',
+        idKey: 'blogId',
+        isInternalRequest: true,
+      },
+    );
+
     const post = await this.postsService.create(req.body);
 
     if (!post) {
-      res.status(400).json({ errorMessage: 'Bad request' });
+      res.status(400).json({ errorMessage: 'Bad request' }).end();
     } else {
-      res.status(201).json(post);
+      res.status(201).json(post).end();
     }
   }
 

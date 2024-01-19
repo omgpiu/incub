@@ -1,16 +1,16 @@
-import { IVideo, Video } from '../entity';
-import { inject, injectable } from 'inversify';
-import 'reflect-metadata';
-import { MongoDBClient, TYPES, BaseRepository } from '../../common';
+import { type IBlog, Blog } from '../entity';
 import { ObjectId } from 'mongodb';
-import { VideoCreateDto, VideoUpdateDto } from '../dto';
+import { BaseRepository, MongoDBClient, TYPES } from '../../common';
+import { inject, injectable } from 'inversify';
+import { BlogDto } from '../dto';
+import 'reflect-metadata';
 
 @injectable()
-export class VideosRepository extends BaseRepository<IVideo> {
+export class BlogsRepository extends BaseRepository<IBlog> {
   constructor(
     @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,
   ) {
-    super(mongoDBClient, 'videos');
+    super(mongoDBClient, 'blogs');
   }
 
   async getAll() {
@@ -23,28 +23,23 @@ export class VideosRepository extends BaseRepository<IVideo> {
     return null;
   }
 
-  async create(dto: VideoCreateDto) {
-    const newVideo = new Video({
-      ...dto,
+  async create(data: BlogDto) {
+    const newBlog = new Blog({
+      ...data,
       createdAt: new Date().toISOString(),
-      publicationDate: new Date(
-        new Date().setDate(new Date().getDate() + 1),
-      ).toISOString(),
-      canBeDownloaded: false,
-      minAgeRestriction: null,
+      isMembership: true,
     });
 
     const id = await this.repository
-      .insertOne({ ...newVideo })
+      .insertOne({ ...newBlog })
       .then((result) => result.insertedId.toString());
-
     return {
-      ...newVideo,
+      ...newBlog,
       id,
     };
   }
 
-  async update(_id: ObjectId, dto: VideoUpdateDto): Promise<Video | null> {
+  async update(_id: ObjectId, dto: BlogDto): Promise<IBlog | null> {
     const res = await this.repository.findOneAndUpdate(
       { _id },
       {

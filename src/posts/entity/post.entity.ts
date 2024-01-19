@@ -8,16 +8,11 @@ export class Post implements IPost {
   blogId: string;
   blogName: string;
 
-  constructor(data: IPost) {
-    this.id = data.id;
+  constructor(data: Omit<IPost, 'id'>) {
     this.title = data.title;
     this.shortDescription = data.shortDescription;
     this.content = data.content;
     this.blogId = data.blogId;
     this.blogName = data.blogName;
-  }
-
-  update(updateData: Omit<IPost, 'id'>) {
-    Object.assign(this, updateData);
   }
 }

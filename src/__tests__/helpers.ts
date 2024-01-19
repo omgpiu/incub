@@ -1,7 +1,7 @@
 import { Application } from 'express';
 import request, { Test } from 'supertest';
 
-export function makeAuthRequest<T>(
+export function requestWithAuth<T>(
   app: Application,
   method: 'post' | 'put' | 'delete',
   url: string,

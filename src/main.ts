@@ -9,19 +9,13 @@ import {
   TYPES,
 } from './common';
 
-import {
-  IVideosController,
-  IVideosService,
-  VideosController,
-  VideosRepository,
-  VideosService,
-} from './videos';
+import { videoBindings } from './videos';
 import { IUtilsController, UtilsController } from './utils';
 import { Container, ContainerModule, interfaces } from 'inversify';
 import { Express } from 'express';
-import { BlogsController, BlogsService } from './blogs';
-import { PostsController, PostsService } from './posts';
 import { IMiddleware } from './common/interfaces';
+import { blogBindings } from './blogs';
+import { postBindings } from './posts';
 
 export interface IBootstrapReturn {
   appContainer: Container;
@@ -29,17 +23,8 @@ export interface IBootstrapReturn {
   express: Express;
 }
 
-export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
+export const commonBindings = new ContainerModule((bind: interfaces.Bind) => {
   bind<ILogger>(TYPES.ILogger).to(LoggerService);
-  bind<IVideosService>(TYPES.VideosService).to(VideosService);
-  bind<IVideosController>(TYPES.VideosController).to(VideosController);
-  bind<VideosRepository>(TYPES.VideosRepository)
-    .to(VideosRepository)
-    .inSingletonScope();
-  bind<BlogsController>(TYPES.BlogsController).to(BlogsController);
-  bind<BlogsService>(TYPES.BlogsService).to(BlogsService);
-  bind<PostsController>(TYPES.PostsController).to(PostsController);
-  bind<PostsService>(TYPES.PostsService).to(PostsService);
   bind<IUtilsController>(TYPES.UtilsController).to(UtilsController);
   bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
   bind<IMiddleware>(TYPES.AuthMiddlewareService).to(AuthMiddlewareService);
@@ -49,9 +34,15 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
 
 export async function bootstrap(port?: number): Promise<IBootstrapReturn> {
   const appContainer = new Container();
-  appContainer.load(appBindings);
+  appContainer.load(videoBindings);
+  appContainer.load(blogBindings);
+  appContainer.load(postBindings);
+  appContainer.load(commonBindings);
+
   const app = appContainer.get<App>(TYPES.Application);
+
   await app.start(port);
+
   return { appContainer, app, express: app.app };
 }
 
