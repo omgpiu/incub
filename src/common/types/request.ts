@@ -9,3 +9,7 @@ export type RequestWithQuery<T> = Request<object, object, object, T>;
 export interface BasePramPayload {
   id?: ObjectId;
 }
+
+export interface Zalupa {
+  [key: string]: unknown;
+}

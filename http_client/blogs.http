@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:3000
 
 ### Get Blogs
-GET {{baseUrl}}/posts
+GET {{baseUrl}}/blogs
 Accept: application/json
 
 ### Create Blog
@@ -17,7 +17,7 @@ authorization: Basic YWRtaW46cXdlcnR5
 }
 
 ### Get Blog by id
-GET {{baseUrl}}/blogs/0
+GET {{baseUrl}}/blogs/65aa9c86948342fcd6414db7
 Accept: application/json
 
 ### Update Blog by id

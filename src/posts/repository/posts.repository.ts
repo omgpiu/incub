@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { Post, IPost } from '../entity';
 import { BaseRepository, MongoDBClient, TYPES } from '../../common';
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ObjectId } from 'mongodb';
 import { PostDto } from '../dto';
-
+import 'reflect-metadata';
+@injectable()
 export class PostsRepository extends BaseRepository<IPost> {
   constructor(
     @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,

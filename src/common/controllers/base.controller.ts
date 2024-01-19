@@ -1,4 +1,4 @@
-import { Response, Router, Request } from 'express';
+import { Request, Response, Router } from 'express';
 import { ILogger } from '../logger';
 import { IControllerRoute } from '../interfaces';
 import { injectable } from 'inversify';
@@ -41,6 +41,7 @@ export abstract class BaseController {
   get router(): Router {
     return this._router;
   }
+
   protected async handleWithId<T, P extends BasePramPayload, B, Q>(
     req: Request<P, object, B, Q>,
     res: Response,
@@ -48,21 +49,41 @@ export abstract class BaseController {
     options: {
       code?: number;
       entity?: 'Video' | 'Blog' | 'Post';
+      idKey?: string;
+      isInternalRequest?: boolean;
     },
-  ): Promise<void> {
-    const id = req.params.id;
+  ) {
+    let idValue;
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    if (options.idKey && req.body[options.idKey]) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      idValue = req.body[options.idKey];
+    } else {
+      idValue = req.params.id;
+    }
+
     const notFoundMessage = `${options.entity} not found`;
-    if (!id || !ObjectId.isValid(id)) {
-      res.status(404).json({ message: notFoundMessage });
+
+    if (!idValue || typeof idValue !== 'string' || !ObjectId.isValid(idValue)) {
+      res.status(404).json({ message: notFoundMessage }).end();
       return;
     }
 
     try {
+      const id = new ObjectId(idValue);
       const result = await callback(id);
+
       if (result) {
-        res.status(options.code ?? 200).json(result);
+        if (options.isInternalRequest) {
+          return result;
+        } else {
+          res.status(options.code ?? 200).json(result);
+        }
       } else if (options.code === 204 && result) {
-        res.sendStatus(204);
+        res.sendStatus(204).end();
       } else {
         res.status(404).json({ message: notFoundMessage });
       }

@@ -1,9 +1,11 @@
 import { type IBlog, Blog } from '../entity';
 import { ObjectId } from 'mongodb';
 import { BaseRepository, MongoDBClient, TYPES } from '../../common';
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { BlogDto } from '../dto';
+import 'reflect-metadata';
 
+@injectable()
 export class BlogsRepository extends BaseRepository<IBlog> {
   constructor(
     @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,

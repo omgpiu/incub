@@ -32,7 +32,9 @@ export class BlogsService implements IBlogsService {
   }
 
   async getById(id: ObjectId): Promise<IBlog | null> {
-    return await this.blogsRepository.getById(id);
+    const blog = await this.blogsRepository.getById(id);
+    console.log(blog, 'blog');
+    return blog;
   }
   async delete(id: ObjectId): Promise<boolean | null> {
     const deletedCount = await this.blogsRepository.delete(id);
