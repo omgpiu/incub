@@ -8,7 +8,7 @@ import 'reflect-metadata';
 @injectable()
 export class PostsRepository extends BaseRepository<IPost> {
   constructor(
-    @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,
+    @inject(TYPES.MongoDBClient) readonly mongoDBClient: MongoDBClient,
   ) {
     super(mongoDBClient, 'posts');
   }
