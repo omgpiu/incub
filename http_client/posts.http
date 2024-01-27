@@ -8,12 +8,13 @@ Accept: application/json
 
 POST {{baseUrl}}/posts
 Content-Type: application/json
+authorization: Basic YWRtaW46cXdlcnR5
 
 {
   "title": "string",
   "shortDescription": "string",
   "content": "string",
-  "blogId": "string"
+  "blogId": "65b4f8a2ca3fac90b6ab0a4f"
 }
 
 ### Get Blog by id

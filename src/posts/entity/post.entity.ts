@@ -7,6 +7,7 @@ export class Post implements IPost {
   content: string;
   blogId: string;
   blogName: string;
+  createdAt: string;
 
   constructor(data: Omit<IPost, 'id'>) {
     this.title = data.title;
@@ -14,5 +15,6 @@ export class Post implements IPost {
     this.content = data.content;
     this.blogId = data.blogId;
     this.blogName = data.blogName;
+    this.createdAt = data.createdAt;
   }
 }

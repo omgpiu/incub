@@ -35,7 +35,6 @@ export class MongoDBClient {
         this.isConnected = true;
         this.logger.log('Connected correctly to DB');
       } catch (error) {
-        await this.disconnect();
         if (error instanceof Error) {
           this.logger.error('DB  connection error:' + error.message);
         }

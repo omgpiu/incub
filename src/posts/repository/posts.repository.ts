@@ -25,6 +25,7 @@ export class PostsRepository extends BaseRepository<IPost> {
   async create(dto: PostDto) {
     const newPost = new Post({
       blogName: faker.lorem.sentence({ min: 1, max: 5 }),
+      createdAt: new Date().toISOString(),
       ...dto,
     });
     const id = await this.repository
@@ -41,7 +42,7 @@ export class PostsRepository extends BaseRepository<IPost> {
     const res = await this.repository.findOneAndUpdate(
       { _id },
       {
-        $set: dto,
+        $set: { ...dto, createdAt: new Date().toISOString() },
       },
     );
     if (res) {
