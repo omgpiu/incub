@@ -8,7 +8,7 @@ import { VideoCreateDto, VideoUpdateDto } from '../dto';
 @injectable()
 export class VideosRepository extends BaseRepository<IVideo> {
   constructor(
-    @inject(TYPES.MongoDBClient) private readonly mongoDBClient: MongoDBClient,
+    @inject(TYPES.MongoDBClient) readonly mongoDBClient: MongoDBClient,
   ) {
     super(mongoDBClient, 'videos');
   }
