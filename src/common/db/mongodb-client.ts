@@ -11,7 +11,7 @@ export class MongoDBClient {
 
   constructor(@inject(TYPES.ILogger) private readonly logger: ILogger) {
     let mongoUrl;
-    console.log(process.env);
+
     if (process.env.NODE_ENV === 'production') {
       mongoUrl = process.env.MONGO_URL_PROD;
       this.logger.log('MongoBd started in production mode');
@@ -35,7 +35,6 @@ export class MongoDBClient {
         this.isConnected = true;
         this.logger.log('Connected correctly to DB');
       } catch (error) {
-        // await this.disconnect();
         if (error instanceof Error) {
           this.logger.error('DB  connection error:' + error.message);
         }
