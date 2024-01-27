@@ -42,7 +42,7 @@ export class PostsRepository extends BaseRepository<IPost> {
     const res = await this.repository.findOneAndUpdate(
       { _id },
       {
-        $set: { ...dto, createdAt: new Date().toISOString() },
+        $set: { ...dto },
       },
     );
     if (res) {
