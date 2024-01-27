@@ -27,7 +27,7 @@ export class BlogsRepository extends BaseRepository<IBlog> {
     const newBlog = new Blog({
       ...data,
       createdAt: new Date().toISOString(),
-      isMembership: true,
+      isMembership: false,
     });
 
     const id = await this.repository
