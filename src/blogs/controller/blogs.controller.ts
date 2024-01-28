@@ -1,29 +1,28 @@
 import { Request, Response } from 'express';
-import { ValidationChain } from 'express-validator';
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import {
   AuthMiddlewareService,
   BaseController,
+  BasePramPayload,
   ILogger,
   RequestWithBody,
+  RequestWithBodyParams,
   RequestWithQuery,
+  SearchParams,
   TYPES,
   ValidateMiddleware,
-  BasePramPayload,
-  RequestWithBodyParams,
 } from '../../common';
-import { baseValidation } from '../validation';
+import { baseValidation, getAllValidation } from '../validation';
 import { type BlogDto } from '../dto';
 import { IBlogsService } from '../service';
 import { IBlogsController } from './blogs.controller.interface';
+
 @injectable()
 export class BlogsController
   extends BaseController
   implements IBlogsController
 {
-  private readonly validation: ValidationChain[];
-
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
     @inject(TYPES.BlogsService) private blogsService: IBlogsService,
@@ -31,28 +30,26 @@ export class BlogsController
     private authService: AuthMiddlewareService,
   ) {
     super(loggerService);
-    this.validation = baseValidation;
 
     this.bindRoutes([
-      { path: '/', func: this.getAll, method: 'get' },
+      {
+        path: '/',
+        func: this.getAll,
+        method: 'get',
+        middlewares: [new ValidateMiddleware(getAllValidation)],
+      },
       {
         path: '/',
         func: this.create,
         method: 'post',
-        middlewares: [
-          this.authService,
-          new ValidateMiddleware(this.validation),
-        ],
+        middlewares: [this.authService, new ValidateMiddleware(baseValidation)],
       },
       { path: '/:id', func: this.getById, method: 'get' },
       {
         path: '/:id',
         func: this.update,
         method: 'put',
-        middlewares: [
-          this.authService,
-          new ValidateMiddleware(this.validation),
-        ],
+        middlewares: [this.authService, new ValidateMiddleware(baseValidation)],
       },
       {
         path: '/:id',
@@ -81,8 +78,8 @@ export class BlogsController
     }
   }
 
-  async getAll(req: Request, res: Response) {
-    const blogs = await this.blogsService.getAll();
+  async getAll(req: RequestWithQuery<Partial<SearchParams>>, res: Response) {
+    const blogs = await this.blogsService.getAll(req.query);
     res.status(200).json(blogs);
   }
 

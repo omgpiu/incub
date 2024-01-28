@@ -1,10 +1,10 @@
-import { BlogDto } from '../dto';
+import { BlogDto, SearchBlogsDto } from '../dto';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IBlogsService } from './blogs.service.interface';
 import { type IBlog } from '../entity';
 import { ObjectId } from 'mongodb';
-import { TYPES } from '../../common';
+import { SearchParams, TYPES } from '../../common';
 import { BlogsQueryRepository, BlogsRepository } from '../repository';
 
 @injectable()
@@ -32,8 +32,9 @@ export class BlogsService implements IBlogsService {
     });
   }
 
-  async getAll(): Promise<IBlog[]> {
-    return await this.blogsQueryRepository.getAll();
+  async getAll(params: SearchParams) {
+    const dto = new SearchBlogsDto(params);
+    return await this.blogsQueryRepository.getAll(dto);
   }
 
   async getById(id: ObjectId): Promise<IBlog | null> {

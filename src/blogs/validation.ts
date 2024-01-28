@@ -35,3 +35,10 @@ export const baseValidation = [
     )
     .withMessage('WebsiteUrl must be a valid URL'),
 ];
+
+export const getAllValidation = [
+  check('sortDirection')
+    .isIn(['asc', 'desc'])
+    .withMessage('Invalid sort direction'),
+  check('sortBy').isAlphanumeric().withMessage('Invalid sort field'),
+];

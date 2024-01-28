@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ValidationChain } from 'express-validator';
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import {
@@ -10,10 +9,11 @@ import {
   RequestWithBody,
   RequestWithBodyParams,
   RequestWithQuery,
+  SearchParams,
   TYPES,
   ValidateMiddleware,
 } from '../../common';
-import { baseValidation } from '../validation';
+import { baseValidation, getAllValidation } from '../validation';
 import { IPostsService } from '../service';
 import { IPostsController } from './posts.controller.interface';
 import { PostDto } from '../dto';
@@ -24,8 +24,6 @@ export class PostsController
   extends BaseController
   implements IPostsController
 {
-  private readonly postValidation: ValidationChain[];
-
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
     @inject(TYPES.PostsService) private postsService: IPostsService,
@@ -34,29 +32,26 @@ export class PostsController
     private authService: AuthMiddlewareService,
   ) {
     super(loggerService);
-    this.postsService = postsService;
-    this.postValidation = baseValidation;
 
     this.bindRoutes([
-      { path: '/', func: this.getAll, method: 'get' },
+      {
+        path: '/',
+        func: this.getAll,
+        method: 'get',
+        middlewares: [new ValidateMiddleware(getAllValidation)],
+      },
       {
         path: '/',
         func: this.create,
         method: 'post',
-        middlewares: [
-          this.authService,
-          new ValidateMiddleware(this.postValidation),
-        ],
+        middlewares: [this.authService, new ValidateMiddleware(baseValidation)],
       },
       { path: '/:id', func: this.getById, method: 'get' },
       {
         path: '/:id',
         func: this.update,
         method: 'put',
-        middlewares: [
-          this.authService,
-          new ValidateMiddleware(this.postValidation),
-        ],
+        middlewares: [this.authService, new ValidateMiddleware(baseValidation)],
       },
       {
         path: '/:id',
@@ -101,8 +96,8 @@ export class PostsController
     );
   }
 
-  async getAll(req: Request, res: Response) {
-    const posts = await this.postsService.getAll();
+  async getAll(req: RequestWithQuery<Partial<SearchParams>>, res: Response) {
+    const posts = await this.postsService.getAll(req.query);
     res.status(200).json(posts);
   }
 
