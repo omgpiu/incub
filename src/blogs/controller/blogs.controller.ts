@@ -64,12 +64,13 @@ export class BlogsController
   }
 
   async create(req: RequestWithBody<BlogDto>, res: Response) {
-    const blog = await this.blogsService.create(req.body);
-
-    if (!blog) {
-      res.status(400).json({ errorMessage: 'Bad request' });
-    } else {
+    try {
+      const _blogId = await this.blogsService.create(req.body);
+      const blog = await this.blogsService.getById(_blogId);
       res.status(201).json(blog);
+    } catch (e) {
+      console.error(e);
+      res.status(400).json({ error: 'Bad Request' });
     }
   }
 

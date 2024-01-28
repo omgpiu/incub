@@ -1,9 +1,9 @@
-import { type IBlog, Blog } from '../entity';
 import { ObjectId } from 'mongodb';
-import { BaseRepository, MongoDBClient, TYPES } from '../../common';
 import { inject, injectable } from 'inversify';
-import { BlogDto } from '../dto';
 import 'reflect-metadata';
+import { BlogDto } from '../../dto';
+import { BaseRepository, MongoDBClient, TYPES } from '../../../common';
+import { Blog, IBlog } from '../../entity';
 
 @injectable()
 export class BlogsRepository extends BaseRepository<IBlog> {
@@ -13,30 +13,16 @@ export class BlogsRepository extends BaseRepository<IBlog> {
     super(mongoDBClient, 'blogs');
   }
 
-  async getAll() {
-    return this.transformArray(await this.repository.find().toArray());
-  }
-
-  async getById(_id: ObjectId) {
-    const res = await this.repository.findOne({ _id });
-    if (res) return this.transformDocument(res);
-    return null;
-  }
-
-  async create(data: BlogDto) {
+  async create(data: BlogDto): Promise<ObjectId> {
     const newBlog = new Blog({
       ...data,
       createdAt: new Date().toISOString(),
       isMembership: false,
     });
 
-    const id = await this.repository
+    return await this.repository
       .insertOne({ ...newBlog })
-      .then((result) => result.insertedId.toString());
-    return {
-      ...newBlog,
-      id,
-    };
+      .then((result) => result.insertedId);
   }
 
   async update(_id: ObjectId, dto: BlogDto): Promise<IBlog | null> {

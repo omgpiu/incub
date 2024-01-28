@@ -14,6 +14,7 @@ const blogs = {
   BlogsController: Symbol.for('BlogsController'),
   BlogsService: Symbol.for('BlogsService'),
   BlogsRepository: Symbol.for('BlogsRepository'),
+  BlogsQueryRepository: Symbol.for('BlogsQueryRepository'),
 };
 export const TYPES = {
   ...videos,
