@@ -5,13 +5,13 @@ import { inject, injectable } from 'inversify';
 import {
   AuthMiddlewareService,
   BaseController,
+  BasePramPayload,
   ILogger,
   RequestWithBody,
+  RequestWithBodyParams,
   RequestWithQuery,
   TYPES,
   ValidateMiddleware,
-  BasePramPayload,
-  RequestWithBodyParams,
 } from '../../common';
 import { baseValidation } from '../validation';
 import { IPostsService } from '../service';
@@ -68,7 +68,7 @@ export class PostsController
   }
 
   async create(req: RequestWithBody<PostDto>, res: Response) {
-    await this.handleWithId(
+    await this.requestWithId(
       req,
       res,
       (blogId) => this.blogsService.getById(blogId),
@@ -79,14 +79,26 @@ export class PostsController
         isInternalRequest: true,
       },
     );
+    const _id = await this.requestWithId(
+      req,
+      res,
+      () => this.postsService.create(req.body),
+      {
+        entity: 'Post',
+        idKey: 'blogId',
+        isInternalRequest: true,
+      },
+    );
 
-    const post = await this.postsService.create(req.body);
-
-    if (!post) {
-      res.status(400).json({ errorMessage: 'Bad request' }).end();
-    } else {
-      res.status(201).json(post).end();
-    }
+    await this.requestWithId(
+      req,
+      res,
+      (postId) => this.postsService.getById(postId),
+      {
+        entity: 'Post',
+        id: _id,
+      },
+    );
   }
 
   async getAll(req: Request, res: Response) {
@@ -95,7 +107,7 @@ export class PostsController
   }
 
   async getById(req: RequestWithQuery<{ id?: string }>, res: Response) {
-    await this.handleWithId(req, res, (id) => this.postsService.getById(id), {
+    await this.requestWithId(req, res, (id) => this.postsService.getById(id), {
       code: 200,
       entity: 'Post',
     });
@@ -105,7 +117,7 @@ export class PostsController
     req: RequestWithBodyParams<BasePramPayload, PostDto>,
     res: Response,
   ) {
-    await this.handleWithId(
+    await this.requestWithId(
       req,
       res,
       (id) => this.postsService.update(id, req.body),
@@ -117,7 +129,7 @@ export class PostsController
   }
 
   async delete(req: Request<BasePramPayload>, res: Response) {
-    await this.handleWithId(req, res, (id) => this.postsService.delete(id), {
+    await this.requestWithId(req, res, (id) => this.postsService.delete(id), {
       code: 204,
       entity: 'Post',
     });

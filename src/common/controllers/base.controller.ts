@@ -6,6 +6,8 @@ import 'reflect-metadata';
 import { BasePramPayload } from '../types';
 import { ObjectId } from 'mongodb';
 
+type Entity = 'Video' | 'Blog' | 'Post';
+
 @injectable()
 export abstract class BaseController {
   private readonly _router: Router;
@@ -25,36 +27,69 @@ export abstract class BaseController {
     }
   }
 
-  public created(res: Response) {
-    res.status(201);
-  }
+  private getNotFoundMessage = (entity?: Entity) => {
+    return `${entity ?? 'Entity'} not found`;
+  };
+  private makeRequest = async <T>(
+    res: Response,
+    idValue: string | ObjectId,
+    callback: (id: ObjectId) => Promise<T | null>,
+    errorMessage: string,
+    isInternalRequest?: boolean,
+    code?: number,
+  ) => {
+    try {
+      const id = new ObjectId(idValue);
+      const result = await callback(id);
 
-  public send<T>(res: Response, code: number, message: T) {
-    res.type('application/json');
-    return res.status(code).json(message);
-  }
-
-  public ok<T>(res: Response, message: T) {
-    return this.send<T>(res, 200, message);
-  }
+      if (result) {
+        if (isInternalRequest) {
+          return result;
+        } else {
+          res
+            .status(code ?? 200)
+            .json(result)
+            .end();
+        }
+      } else if (code === 204 && result) {
+        res.sendStatus(204).end();
+      } else {
+        res.status(404).json({ message: errorMessage }).end();
+      }
+    } catch (error) {
+      res.status(400).json({ message: 'Some error occurred' }).end();
+    }
+  };
 
   get router(): Router {
     return this._router;
   }
 
-  protected async handleWithId<T, P extends BasePramPayload, B, Q>(
+  protected async requestWithId<T, P extends BasePramPayload, B, Q>(
     req: Request<P, object, B, Q>,
     res: Response,
     callback: (id: ObjectId) => Promise<T | null>,
     options: {
       code?: number;
-      entity?: 'Video' | 'Blog' | 'Post';
+      entity?: Entity;
       idKey?: string;
       isInternalRequest?: boolean;
+      id?: ObjectId;
     },
   ) {
     let idValue;
+    const notFoundMessage = this.getNotFoundMessage(options.entity);
 
+    if (options.id) {
+      return await this.makeRequest(
+        res,
+        options.id,
+        callback,
+        notFoundMessage,
+        options.isInternalRequest ?? false,
+        options.code,
+      );
+    }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     if (options.idKey && req.body[options.idKey]) {
@@ -65,30 +100,18 @@ export abstract class BaseController {
       idValue = req.params.id;
     }
 
-    const notFoundMessage = `${options.entity} not found`;
-
     if (!idValue || typeof idValue !== 'string' || !ObjectId.isValid(idValue)) {
       res.status(404).json({ message: notFoundMessage }).end();
       return;
     }
 
-    try {
-      const id = new ObjectId(idValue);
-      const result = await callback(id);
-
-      if (result) {
-        if (options.isInternalRequest) {
-          return result;
-        } else {
-          res.status(options.code ?? 200).json(result);
-        }
-      } else if (options.code === 204 && result) {
-        res.sendStatus(204).end();
-      } else {
-        res.status(404).json({ message: notFoundMessage });
-      }
-    } catch (error) {
-      res.status(400).json({ message: 'Some error occurred' });
-    }
+    return await this.makeRequest(
+      res,
+      idValue,
+      callback,
+      notFoundMessage,
+      options.isInternalRequest ?? false,
+      options.code,
+    );
   }
 }

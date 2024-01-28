@@ -5,15 +5,17 @@ import { type IPost } from '../entity';
 import { IPostsService } from './posts.service.interface';
 import { ObjectId } from 'mongodb';
 import { TYPES } from '../../common';
-import { PostsRepository } from '../repository';
+import { PostsQueryRepository, PostsRepository } from '../repository';
 
 @injectable()
 export class PostsService implements IPostsService {
   constructor(
     @inject(TYPES.PostsRepository)
     private readonly postsRepository: PostsRepository,
+    @inject(TYPES.PostsQueryRepository)
+    private readonly postsQueryRepository: PostsQueryRepository,
   ) {}
-  async create(dto: PostDto): Promise<IPost | null> {
+  async create(dto: PostDto): Promise<ObjectId> {
     return await this.postsRepository.create({
       title: dto.title,
       content: dto.content,
@@ -32,11 +34,11 @@ export class PostsService implements IPostsService {
   }
 
   async getAll(): Promise<IPost[]> {
-    return await this.postsRepository.getAll();
+    return await this.postsQueryRepository.getAll();
   }
 
   async getById(id: ObjectId): Promise<IPost | null> {
-    return await this.postsRepository.getById(id);
+    return await this.postsQueryRepository.getById(id);
   }
 
   async delete(id: ObjectId): Promise<boolean> {

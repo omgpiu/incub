@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { Post, IPost } from '../entity';
-import { BaseRepository, MongoDBClient, TYPES } from '../../common';
 import { inject, injectable } from 'inversify';
 import { ObjectId } from 'mongodb';
-import { PostDto } from '../dto';
 import 'reflect-metadata';
+import { IPost, Post } from '../../entity';
+import { BaseRepository, MongoDBClient, TYPES } from '../../../common';
+import { PostDto } from '../../dto';
 @injectable()
 export class PostsRepository extends BaseRepository<IPost> {
   constructor(
@@ -13,29 +13,15 @@ export class PostsRepository extends BaseRepository<IPost> {
     super(mongoDBClient, 'posts');
   }
 
-  async getAll() {
-    return this.transformArray(await this.repository.find().toArray());
-  }
-  async getById(_id: ObjectId) {
-    const res = await this.repository.findOne({ _id });
-    if (res) return this.transformDocument(res);
-    return null;
-  }
-
   async create(dto: PostDto) {
     const newPost = new Post({
       blogName: faker.lorem.sentence({ min: 1, max: 5 }),
       createdAt: new Date().toISOString(),
       ...dto,
     });
-    const id = await this.repository
+    return await this.repository
       .insertOne({ ...newPost })
-      .then((result) => result.insertedId.toString());
-
-    return {
-      ...newPost,
-      id,
-    };
+      .then((result) => result.insertedId);
   }
 
   async update(_id: ObjectId, dto: PostDto): Promise<IPost | null> {

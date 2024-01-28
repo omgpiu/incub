@@ -65,9 +65,16 @@ export class BlogsController
 
   async create(req: RequestWithBody<BlogDto>, res: Response) {
     try {
-      const _blogId = await this.blogsService.create(req.body);
-      const blog = await this.blogsService.getById(_blogId);
-      res.status(201).json(blog);
+      const _id = await this.blogsService.create(req.body);
+      await this.requestWithId(
+        req,
+        res,
+        (_blogId) => this.blogsService.getById(_blogId),
+        {
+          entity: 'Blog',
+          id: _id,
+        },
+      );
     } catch (e) {
       console.error(e);
       res.status(400).json({ error: 'Bad Request' });
@@ -80,7 +87,7 @@ export class BlogsController
   }
 
   async getById(req: RequestWithQuery<{ id?: string }>, res: Response) {
-    await this.handleWithId(req, res, (id) => this.blogsService.getById(id), {
+    await this.requestWithId(req, res, (id) => this.blogsService.getById(id), {
       code: 200,
       entity: 'Blog',
     });
@@ -90,7 +97,7 @@ export class BlogsController
     req: RequestWithBodyParams<BasePramPayload, BlogDto>,
     res: Response,
   ) {
-    await this.handleWithId(
+    await this.requestWithId(
       req,
       res,
       (id) => this.blogsService.update(id, req.body),
@@ -102,7 +109,7 @@ export class BlogsController
   }
 
   async delete(req: Request<BasePramPayload>, res: Response) {
-    await this.handleWithId(req, res, (id) => this.blogsService.delete(id), {
+    await this.requestWithId(req, res, (id) => this.blogsService.delete(id), {
       code: 204,
       entity: 'Blog',
     });

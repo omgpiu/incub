@@ -13,7 +13,6 @@ import { Server } from 'http';
 import 'reflect-metadata';
 import { IExceptionFilter, ILogger, MongoDBClient, TYPES } from './common';
 import { UtilsController } from './utils';
-import { VideosController } from './videos';
 import { inject, injectable } from 'inversify';
 import { BlogsController } from './blogs';
 import { PostsController } from './posts';
@@ -29,7 +28,6 @@ export default class App {
 
   constructor(
     @inject(TYPES.ILogger) private loggerService: ILogger,
-    @inject(TYPES.VideosController) private videosController: VideosController,
     @inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
     @inject(TYPES.UtilsController) private utilsController: UtilsController,
     @inject(TYPES.BlogsController) private blogsController: BlogsController,
@@ -52,7 +50,6 @@ export default class App {
 
   private useRoutes() {
     this.app.use(Routes.ROOT, this.utilsController.router);
-    this.app.use(Routes.VIDEOS, this.videosController.router);
     this.app.use(Routes.BLOGS, this.blogsController.router);
     this.app.use(Routes.POSTS, this.postsController.router);
   }

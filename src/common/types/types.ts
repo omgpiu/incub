@@ -8,6 +8,7 @@ const posts = {
   PostsService: Symbol.for('PostsService'),
   PostsController: Symbol.for('PostsController'),
   PostsRepository: Symbol.for('PostsRepository'),
+  PostsQueryRepository: Symbol.for('PostQueryRepository'),
 };
 
 const blogs = {
