@@ -6,7 +6,7 @@ export type RequestWithBodyParams<P, B> = Request<P, object, B>;
 
 export type RequestWithQuery<T> = Request<object, object, object, T>;
 
-export interface BasePramPayload {
+export interface BaseParamPayload {
   id?: ObjectId;
 }
 export interface SearchParams {

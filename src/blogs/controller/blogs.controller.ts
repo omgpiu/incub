@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import {
   AuthMiddlewareService,
   BaseController,
-  BasePramPayload,
+  BaseParamPayload,
   ILogger,
   RequestWithBody,
   RequestWithBodyParams,
@@ -13,10 +13,15 @@ import {
   TYPES,
   ValidateMiddleware,
 } from '../../common';
-import { baseValidation, getAllValidation } from '../validation';
-import { type BlogDto } from '../dto';
+import {
+  baseValidation,
+  createBlogPostValidation,
+  getAllValidation,
+} from '../validation';
+import { type BlogDto, BlogPostDto } from '../dto';
 import { IBlogsService } from '../service';
 import { IBlogsController } from './blogs.controller.interface';
+import { IPostsService } from '../../posts';
 
 @injectable()
 export class BlogsController
@@ -26,6 +31,7 @@ export class BlogsController
   constructor(
     @inject(TYPES.ILogger) loggerService: ILogger,
     @inject(TYPES.BlogsService) private blogsService: IBlogsService,
+    @inject(TYPES.PostsService) private postsService: IPostsService,
     @inject(TYPES.AuthMiddlewareService)
     private authService: AuthMiddlewareService,
   ) {
@@ -40,9 +46,18 @@ export class BlogsController
       },
       {
         path: '/',
-        func: this.create,
+        func: this.createBlog,
         method: 'post',
         middlewares: [this.authService, new ValidateMiddleware(baseValidation)],
+      },
+      {
+        path: '/:id/posts',
+        func: this.createBlogPost,
+        method: 'post',
+        middlewares: [
+          this.authService,
+          new ValidateMiddleware(createBlogPostValidation),
+        ],
       },
       { path: '/:id', func: this.getById, method: 'get' },
       {
@@ -60,7 +75,37 @@ export class BlogsController
     ]);
   }
 
-  async create(req: RequestWithBody<BlogDto>, res: Response) {
+  async createBlogPost(
+    req: RequestWithBodyParams<BaseParamPayload, BlogPostDto>,
+    res: Response,
+  ) {
+    await this.requestWithId(
+      req,
+      res,
+      (_blogId) => this.blogsService.getById(_blogId),
+      {
+        entity: 'Blog',
+        id: req.params.id,
+        isInternalRequest: true,
+      },
+    );
+
+    await this.requestWithId(
+      req,
+      res,
+      (blogId) =>
+        this.postsService.create({
+          blogId: blogId.toString(),
+          ...req.body,
+        }),
+      {
+        entity: 'Post',
+        code: 201,
+      },
+    );
+  }
+
+  async createBlog(req: RequestWithBody<BlogDto>, res: Response) {
     try {
       const _id = await this.blogsService.create(req.body);
       await this.requestWithId(
@@ -91,7 +136,7 @@ export class BlogsController
   }
 
   async update(
-    req: RequestWithBodyParams<BasePramPayload, BlogDto>,
+    req: RequestWithBodyParams<BaseParamPayload, BlogDto>,
     res: Response,
   ) {
     await this.requestWithId(
@@ -105,7 +150,7 @@ export class BlogsController
     );
   }
 
-  async delete(req: Request<BasePramPayload>, res: Response) {
+  async delete(req: Request<BaseParamPayload>, res: Response) {
     await this.requestWithId(req, res, (id) => this.blogsService.delete(id), {
       code: 204,
       entity: 'Blog',

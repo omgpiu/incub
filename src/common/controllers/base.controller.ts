@@ -3,7 +3,7 @@ import { ILogger } from '../logger';
 import { IControllerRoute } from '../interfaces';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
-import { BasePramPayload } from '../types';
+import { BaseParamPayload } from '../types';
 import { ObjectId } from 'mongodb';
 
 type Entity = 'Video' | 'Blog' | 'Post';
@@ -65,7 +65,7 @@ export abstract class BaseController {
     return this._router;
   }
 
-  protected async requestWithId<T, P extends BasePramPayload, B, Q>(
+  protected async requestWithId<T, P extends BaseParamPayload, B, Q>(
     req: Request<P, object, B, Q>,
     res: Response,
     callback: (id: ObjectId) => Promise<T | null>,

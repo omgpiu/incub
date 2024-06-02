@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import {
   AuthMiddlewareService,
   BaseController,
-  BasePramPayload,
+  BaseParamPayload,
   ILogger,
   RequestWithBody,
   RequestWithBodyParams,
@@ -109,7 +109,7 @@ export class PostsController
   }
 
   async update(
-    req: RequestWithBodyParams<BasePramPayload, PostDto>,
+    req: RequestWithBodyParams<BaseParamPayload, PostDto>,
     res: Response,
   ) {
     await this.requestWithId(
@@ -123,7 +123,7 @@ export class PostsController
     );
   }
 
-  async delete(req: Request<BasePramPayload>, res: Response) {
+  async delete(req: Request<BaseParamPayload>, res: Response) {
     await this.requestWithId(req, res, (id) => this.postsService.delete(id), {
       code: 204,
       entity: 'Post',
