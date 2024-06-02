@@ -2,10 +2,10 @@ import { BlogDto, SearchBlogsDto } from '../dto';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IBlogsService } from './blogs.service.interface';
-import { type IBlog } from '../entity';
 import { ObjectId } from 'mongodb';
 import { SearchParams, TYPES } from '../../common';
 import { BlogsQueryRepository, BlogsRepository } from '../repository';
+import { type IBlogView } from '../entity/blog.interface';
 
 @injectable()
 export class BlogsService implements IBlogsService {
@@ -24,12 +24,14 @@ export class BlogsService implements IBlogsService {
     });
   }
 
-  async update(id: ObjectId, dto: BlogDto): Promise<IBlog | null> {
-    return await this.blogsRepository.update(id, {
+  async update(id: ObjectId, dto: BlogDto): Promise<IBlogView | null> {
+    await this.blogsRepository.update(id, {
       name: dto.name,
       description: dto.description,
       websiteUrl: dto.websiteUrl,
     });
+
+    return await this.blogsQueryRepository.getById(id);
   }
 
   async getAll(params: SearchParams) {
@@ -37,9 +39,8 @@ export class BlogsService implements IBlogsService {
     return await this.blogsQueryRepository.getAll(dto);
   }
 
-  async getById(id: ObjectId): Promise<IBlog | null> {
-    const blog = await this.blogsQueryRepository.getById(id);
-    return blog;
+  async getById(id: ObjectId): Promise<IBlogView | null> {
+    return await this.blogsQueryRepository.getById(id);
   }
 
   async delete(id: ObjectId): Promise<boolean | null> {

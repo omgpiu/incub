@@ -2,11 +2,11 @@ import { ObjectId } from 'mongodb';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { BaseRepository, MongoDBClient, TYPES } from '../../../common';
-import { IBlog } from '../../entity';
 import { SearchBlogsDto } from '../../dto';
+import { IBlogView } from '../../entity/blog.interface';
 
 @injectable()
-export class BlogsQueryRepository extends BaseRepository<IBlog> {
+export class BlogsQueryRepository extends BaseRepository<IBlogView> {
   constructor(
     @inject(TYPES.MongoDBClient) readonly mongoDBClient: MongoDBClient,
   ) {
@@ -24,7 +24,8 @@ export class BlogsQueryRepository extends BaseRepository<IBlog> {
         },
       };
     }
-    const result = this.transformArray(
+    console.log(filter, 'filter');
+    const result = this.transformArrayView(
       await this.repository
         .find(filter)
         .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
@@ -45,7 +46,7 @@ export class BlogsQueryRepository extends BaseRepository<IBlog> {
 
   async getById(_id: ObjectId) {
     const res = await this.repository.findOne({ _id });
-    if (res) return this.transformDocument(res);
+    if (res) return this.transformDocumentView(res);
     return null;
   }
 }

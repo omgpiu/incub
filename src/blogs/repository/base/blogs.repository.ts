@@ -33,7 +33,7 @@ export class BlogsRepository extends BaseRepository<IBlog> {
       },
     );
     if (res) {
-      return this.transformDocument(res);
+      return res;
     }
     return null;
   }

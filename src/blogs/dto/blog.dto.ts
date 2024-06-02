@@ -1,7 +1,7 @@
-import { IBlog } from '../entity';
+import { IBlogView } from '../entity/blog.interface';
 
 export class BlogDto
-  implements Omit<IBlog, 'id' | 'createdAt' | 'isMembership'>
+  implements Omit<IBlogView, 'id' | 'createdAt' | 'isMembership'>
 {
   name: string;
   description: string;

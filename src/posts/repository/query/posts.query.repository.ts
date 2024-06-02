@@ -1,7 +1,6 @@
 import { inject, injectable } from 'inversify';
-import { ObjectId, WithoutId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import 'reflect-metadata';
-import { IPost } from '../../entity';
 import {
   BaseRepository,
   MongoDBClient,
@@ -9,19 +8,20 @@ import {
   Pagination,
 } from '../../../common';
 import { SearchPostsDto } from '../../dto';
+import { IPostView } from '../../entity/post.interface';
 
 @injectable()
-export class PostsQueryRepository extends BaseRepository<IPost> {
+export class PostsQueryRepository extends BaseRepository<IPostView> {
   constructor(
     @inject(TYPES.MongoDBClient) readonly mongoDBClient: MongoDBClient,
   ) {
     super(mongoDBClient, 'posts');
   }
 
-  async getAll(dto: SearchPostsDto): Promise<Pagination<WithoutId<IPost>>> {
+  async getAll(dto: SearchPostsDto): Promise<Pagination<IPostView>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = dto;
 
-    const result = this.transformArray(
+    const result = this.transformArrayView(
       await this.repository
         .find()
         .sort({ [sortBy]: sortDirection === 'asc' ? 1 : -1 })
@@ -41,9 +41,9 @@ export class PostsQueryRepository extends BaseRepository<IPost> {
     };
   }
 
-  async getById(_id: ObjectId) {
+  async getById(_id: ObjectId): Promise<IPostView | null> {
     const res = await this.repository.findOne({ _id });
-    if (res) return this.transformDocument(res);
+    if (res) return this.transformDocumentView(res);
     return null;
   }
 }

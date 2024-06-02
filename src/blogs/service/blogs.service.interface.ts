@@ -1,12 +1,12 @@
 import { BlogDto } from '../dto';
-import { IBlog } from '../entity';
-import { ObjectId, WithoutId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { SearchParams, Pagination } from '../../common';
+import { IBlogView } from '../entity/blog.interface';
 
 export interface IBlogsService {
   create: (dto: BlogDto) => Promise<ObjectId>;
-  update: (id: ObjectId, dto: BlogDto) => Promise<IBlog | null>;
-  getAll: (params: SearchParams) => Promise<Pagination<WithoutId<IBlog>>>;
-  getById: (id: ObjectId) => Promise<IBlog | null>;
+  update: (id: ObjectId, dto: BlogDto) => Promise<IBlogView | null>;
+  getAll: (params: SearchParams) => Promise<Pagination<IBlogView>>;
+  getById: (id: ObjectId) => Promise<IBlogView | null>;
   delete: (id: ObjectId) => Promise<boolean | null>;
 }

@@ -10,12 +10,12 @@ export abstract class BaseRepository<T extends object> {
     this.repository = client.getCollection(collectionName);
   }
 
-  protected transformDocument(doc: WithId<T>): WithoutId<T> {
+  protected transformDocumentView(doc: WithId<T>): WithoutId<T> {
     if (!doc) return doc;
     const { _id, ...rest } = doc;
     return { id: _id.toString(), ...rest } as WithoutId<T>;
   }
-  protected transformArray(docs: WithId<T>[]): WithoutId<T>[] {
-    return docs.map((doc) => this.transformDocument(doc));
+  protected transformArrayView(docs: WithId<T>[]): WithoutId<T>[] {
+    return docs.map((doc) => this.transformDocumentView(doc));
   }
 }

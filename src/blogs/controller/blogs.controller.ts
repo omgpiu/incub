@@ -82,25 +82,10 @@ export class BlogsController
     await this.requestWithId(
       req,
       res,
-      (_blogId) => this.blogsService.getById(_blogId),
+      (_blogId) => this.postsService.createBlogPost(_blogId, req.body),
       {
         entity: 'Blog',
         id: req.params.id,
-        isInternalRequest: true,
-      },
-    );
-
-    await this.requestWithId(
-      req,
-      res,
-      (blogId) =>
-        this.postsService.create({
-          blogId: blogId.toString(),
-          ...req.body,
-        }),
-      {
-        entity: 'Post',
-        code: 201,
       },
     );
   }
@@ -124,6 +109,7 @@ export class BlogsController
   }
 
   async getAll(req: RequestWithQuery<Partial<SearchParams>>, res: Response) {
+    console.log(req.query, 'query');
     const blogs = await this.blogsService.getAll(req.query);
     res.status(200).json(blogs);
   }

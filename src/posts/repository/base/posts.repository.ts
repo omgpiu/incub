@@ -24,17 +24,15 @@ export class PostsRepository extends BaseRepository<IPost> {
       .then((result) => result.insertedId);
   }
 
-  async update(_id: ObjectId, dto: PostDto): Promise<IPost | null> {
+  async update(_id: ObjectId, dto: PostDto): Promise<ObjectId | null> {
     const res = await this.repository.findOneAndUpdate(
       { _id },
       {
         $set: { ...dto },
       },
     );
-    if (res) {
-      return this.transformDocument(res);
-    }
-    return null;
+
+    return res?._id ?? null;
   }
 
   async delete(_id: ObjectId) {
