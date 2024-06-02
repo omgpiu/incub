@@ -56,3 +56,10 @@ export const putValidation = [
     .isString()
     .withMessage('blogName must be a string'),
 ];
+
+export const getAllValidation = [
+  check('sortDirection')
+    .isIn(['asc', 'desc'])
+    .withMessage('Invalid sort direction'),
+  check('sortBy').isAlphanumeric().withMessage('Invalid sort field'),
+];

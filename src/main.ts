@@ -9,7 +9,6 @@ import {
   TYPES,
 } from './common';
 
-import { videoBindings } from './videos';
 import { IUtilsController, UtilsController } from './utils';
 import { Container, ContainerModule, interfaces } from 'inversify';
 import { Express } from 'express';
@@ -34,7 +33,6 @@ export const commonBindings = new ContainerModule((bind: interfaces.Bind) => {
 
 export async function bootstrap(port?: number): Promise<IBootstrapReturn> {
   const appContainer = new Container();
-  appContainer.load(videoBindings);
   appContainer.load(blogBindings);
   appContainer.load(postBindings);
   appContainer.load(commonBindings);

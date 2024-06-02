@@ -14,7 +14,7 @@ authorization: Basic YWRtaW46cXdlcnR5
   "title": "string",
   "shortDescription": "string",
   "content": "string",
-  "blogId": "65b4f8a2ca3fac90b6ab0a4f"
+  "blogId": "65b64148a2a3fd84095b567d"
 }
 
 ### Get Blog by id

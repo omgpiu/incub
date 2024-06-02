@@ -1,19 +1,22 @@
-import { PostDto } from '../dto';
+import { PostDto, SearchPostsDto } from '../dto';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { type IPost } from '../entity';
 import { IPostsService } from './posts.service.interface';
-import { ObjectId } from 'mongodb';
-import { TYPES } from '../../common';
-import { PostsRepository } from '../repository';
+import { ObjectId, WithoutId } from 'mongodb';
+import { PostsQueryRepository, PostsRepository } from '../repository';
+import { Pagination, SearchParams, TYPES } from '../../common';
 
 @injectable()
 export class PostsService implements IPostsService {
   constructor(
     @inject(TYPES.PostsRepository)
     private readonly postsRepository: PostsRepository,
+    @inject(TYPES.PostsQueryRepository)
+    private readonly postsQueryRepository: PostsQueryRepository,
   ) {}
-  async create(dto: PostDto): Promise<IPost | null> {
+
+  async create(dto: PostDto): Promise<ObjectId> {
     return await this.postsRepository.create({
       title: dto.title,
       content: dto.content,
@@ -31,12 +34,13 @@ export class PostsService implements IPostsService {
     });
   }
 
-  async getAll(): Promise<IPost[]> {
-    return await this.postsRepository.getAll();
+  async getAll(params: SearchParams): Promise<Pagination<WithoutId<IPost>>> {
+    const dto = new SearchPostsDto(params);
+    return await this.postsQueryRepository.getAll(dto);
   }
 
   async getById(id: ObjectId): Promise<IPost | null> {
-    return await this.postsRepository.getById(id);
+    return await this.postsQueryRepository.getById(id);
   }
 
   async delete(id: ObjectId): Promise<boolean> {
